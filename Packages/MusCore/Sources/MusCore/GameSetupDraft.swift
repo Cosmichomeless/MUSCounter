@@ -24,6 +24,11 @@ public struct GameSetupDraft: Equatable, Sendable {
         self.vacasToWin = vacasToWin
     }
 
+    /// Borrador con los equipos predeterminados y las reglas de las preferencias.
+    public init(preferences: Preferences) {
+        self.init(goal: preferences.goal, vacasToWin: preferences.vacasToWin)
+    }
+
     /// Borrador con los mismos equipos y reglas que una partida existente (revancha, última configuración).
     public init(from game: Game) {
         self.init(

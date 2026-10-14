@@ -58,12 +58,13 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(model.screen, .game)
     }
 
-    func testSetupStartsFromLastGameConfiguration() throws {
+    func testSetupStartsFromPreferencesNotFromLastGame() throws {
         let model = try makeModel()
-        model.startGame(with: GameSetupDraft(firstName: "A", secondName: "B", goal: 30, vacasToWin: 3))
+        model.updatePreferences { $0.goal = 30; $0.vacasToWin = 2 }
+        model.startGame(with: GameSetupDraft(firstName: "A", secondName: "B", goal: 40, vacasToWin: 3))
         model.leaveGame()
         model.openSetup()
-        XCTAssertEqual(model.draft, GameSetupDraft(firstName: "A", secondName: "B", goal: 30, vacasToWin: 3))
+        XCTAssertEqual(model.draft, GameSetupDraft(goal: 30, vacasToWin: 2))
     }
 
     func testInvalidDraftShowsErrorAndStaysPut() throws {

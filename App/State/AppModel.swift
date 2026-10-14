@@ -12,7 +12,7 @@ struct Toast: Identifiable, Equatable {
 @Observable
 final class AppModel {
     enum Screen: Equatable {
-        case home, setup, game, result
+        case home, setup, game, result, history, settings
     }
 
     private let repository: GameRepository
@@ -20,6 +20,10 @@ final class AppModel {
     var screen: Screen = .home
     var game: Game?
     var draft: GameSetupDraft = .standard
+    /// Partidas terminadas o abandonadas, la más reciente primero.
+    private(set) var history: [Game] = []
+    /// Preferencias guardadas: reglas y tema que se usan al crear partidas nuevas.
+    private(set) var preferences: Preferences = .standard
     /// Lance al que se apuntan los tantos con los botones del marcador.
     var selectedLance: Lance = .grande
     /// Hoja abierta sobre el marcador (cantidad libre u órdago).
@@ -32,6 +36,8 @@ final class AppModel {
     init(repository: GameRepository) {
         self.repository = repository
         self.game = repository.activeGame
+        self.history = repository.history
+        self.preferences = repository.preferences
     }
 
     /// Abre los datos del dispositivo. Si el fichero está dañado se aparta (nunca se pierde en silencio)
@@ -59,14 +65,30 @@ final class AppModel {
 
     // MARK: - Navegación
 
+    /// Abre las opciones de partida con las reglas de las preferencias.
     func openSetup() {
-        draft = game.map(GameSetupDraft.init(from:)) ?? .standard
+        draft = GameSetupDraft(preferences: preferences)
         screen = .setup
     }
 
     /// Cancelar la configuración descarta el borrador: no se crea ninguna partida.
     func cancelSetup() {
-        draft = .standard
+        draft = GameSetupDraft(preferences: preferences)
+        screen = .home
+    }
+
+    func openHistory() {
+        errorMessage = nil
+        screen = .history
+    }
+
+    func openSettings() {
+        errorMessage = nil
+        screen = .settings
+    }
+
+    func backToHome() {
+        errorMessage = nil
         screen = .home
     }
 
@@ -82,6 +104,7 @@ final class AppModel {
     /// Vuelve al inicio desde la pantalla de resultado: no queda ninguna partida en curso.
     func goHome() {
         game = repository.activeGame
+        sync()
         toast = nil
         screen = .home
     }
@@ -94,7 +117,56 @@ final class AppModel {
 
     /// Nueva partida desde el resultado: abre las opciones con la configuración de la partida terminada.
     func newGameFromResult() {
-        openSetup()
+        if let finished = game, !finished.isInProgress {
+            draft = GameSetupDraft(from: finished)
+            screen = .setup
+        } else {
+            openSetup()
+        }
+    }
+
+    // MARK: - Historial y preferencias
+
+    /// Guarda un cambio en las preferencias. Solo afecta a las partidas nuevas; si falla no cambia nada.
+    func updatePreferences(_ change: (inout Preferences) -> Void) {
+        var updated = preferences
+        change(&updated)
+        guard updated != preferences else { return }
+        do {
+            try repository.updatePreferences(updated)
+            sync()
+            errorMessage = nil
+        } catch {
+            errorMessage = "No se pudieron guardar los ajustes. Inténtalo de nuevo."
+        }
+    }
+
+    /// Borra una partida del historial.
+    func deleteHistoryGame(_ id: UUID) {
+        do {
+            try repository.deleteHistoryGame(id: id)
+            sync()
+            errorMessage = nil
+        } catch {
+            errorMessage = "No se pudo borrar la partida del historial."
+        }
+    }
+
+    /// Borra todo el historial; la partida en curso se conserva.
+    func deleteHistory() {
+        do {
+            try repository.deleteHistory()
+            sync()
+            errorMessage = nil
+        } catch {
+            errorMessage = "No se pudo borrar el historial."
+        }
+    }
+
+    /// Refresca lo que se muestra a partir del repositorio, que es la fuente de verdad.
+    private func sync() {
+        history = repository.history
+        preferences = repository.preferences
     }
 
     // MARK: - Partida
@@ -121,6 +193,7 @@ final class AppModel {
             try updated.undo()
             try repository.update(updated)
             game = updated
+            sync()
             toast = nil
             errorMessage = nil
             if screen == .result, updated.isInProgress { screen = .game }
@@ -135,6 +208,7 @@ final class AppModel {
     func restartGame() {
         do {
             game = try repository.restartActiveGame()
+            sync()
             toast = nil
             errorMessage = nil
         } catch {
@@ -156,6 +230,7 @@ final class AppModel {
         do {
             try repository.discardActiveGame()
             game = nil
+            sync()
             toast = nil
             screen = .home
         } catch {
@@ -171,6 +246,7 @@ final class AppModel {
             try change(&updated)
             try repository.update(updated)
             game = updated
+            sync()
             errorMessage = nil
             if updated.actions.count > before, let last = updated.actions.last, updated.status != .abandoned {
                 toast = Toast(message: ActionText.summary(last, game: updated))
@@ -200,6 +276,7 @@ final class AppModel {
     func startGame(with draft: GameSetupDraft) {
         do {
             game = try repository.startGame(teamNames: draft.teamNames, rules: draft.rules)
+            sync()
             screen = .game
         } catch {
             errorMessage = "No se pudo crear la partida. Revisa las opciones e inténtalo de nuevo."
