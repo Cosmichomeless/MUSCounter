@@ -19,6 +19,7 @@ struct RootView: View {
         case .home: HomeView(model: model)
         case .setup: SetupView(model: model)
         case .game: GameView(model: model)
+        case .result: ResultView(model: model)
         }
     }
 }

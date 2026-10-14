@@ -12,7 +12,7 @@ struct Toast: Identifiable, Equatable {
 @Observable
 final class AppModel {
     enum Screen: Equatable {
-        case home, setup, game
+        case home, setup, game, result
     }
 
     private let repository: GameRepository
@@ -79,6 +79,24 @@ final class AppModel {
         screen = .home
     }
 
+    /// Vuelve al inicio desde la pantalla de resultado: no queda ninguna partida en curso.
+    func goHome() {
+        game = repository.activeGame
+        toast = nil
+        screen = .home
+    }
+
+    /// Revancha: mismos equipos y reglas. La partida terminada ya está en el historial (una sola vez).
+    func rematch() {
+        guard let finished = game, !finished.isInProgress else { return }
+        startGame(with: GameSetupDraft(from: finished))
+    }
+
+    /// Nueva partida desde el resultado: abre las opciones con la configuración de la partida terminada.
+    func newGameFromResult() {
+        openSetup()
+    }
+
     // MARK: - Partida
 
     /// Apunta `amount` tantos del lance seleccionado al equipo `team`.
@@ -105,6 +123,7 @@ final class AppModel {
             game = updated
             toast = nil
             errorMessage = nil
+            if screen == .result, updated.isInProgress { screen = .game }
         } catch let error as ScoringError {
             errorMessage = Self.message(for: error)
         } catch {
@@ -155,6 +174,10 @@ final class AppModel {
             errorMessage = nil
             if updated.actions.count > before, let last = updated.actions.last, updated.status != .abandoned {
                 toast = Toast(message: ActionText.summary(last, game: updated))
+            }
+            if case .finished = updated.status {
+                toast = nil
+                screen = .result
             }
         } catch let error as ScoringError {
             errorMessage = Self.message(for: error)
