@@ -1,5 +1,4 @@
 import SwiftUI
-import MusCore
 
 @main
 struct MUSCounterApp: App {
@@ -12,7 +11,6 @@ struct MUSCounterApp: App {
 
 struct RootView: View {
     var body: some View {
-        Text("MUSCounter")
-            .font(.largeTitle.bold())
+        ComponentGallery()
     }
 }
