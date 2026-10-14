@@ -39,8 +39,8 @@ El `.xcodeproj` produce conflictos de fusión constantes. `project.yml` es legib
 - Beta cerrada (M3): grupo externo.
 - Firma: certificados y perfiles **nunca** en el repositorio; se gestionan en el llavero local o en secretos de CI.
 
-### D7. Sin red, sin cuenta, sin analítica en la v1
-Simplifica la privacidad (ficha "Datos no recopilados") y elimina clases enteras de fallos.
+### D7. Marcador sin red ni cuenta; anuncios solo fuera del marcador
+El marcador, el historial y la persistencia no dependen de la red ni de ninguna cuenta. Los anuncios (SDK de terceros) viven aislados en las pantallas de Inicio, Historial y victoria; un fallo o la falta de red nunca afecta al marcador. La ficha de privacidad debe declarar los datos del SDK.
 
 ## Convenciones
 

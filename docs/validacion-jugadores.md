@@ -33,7 +33,7 @@ Confirmar con jugadores reales el vocabulario, las variantes y el flujo de anota
 | Tema | Hipótesis por defecto | Cómo se confirma |
 |---|---|---|
 | Objetivo de tantos | Se admiten **30 y 40**; por defecto 40 | ≥ 6/8 jugadores usan uno de los dos |
-| Vacas | Opción **«Vacas»**: 1 (sin vacas), 3 (mejor de 3) o 5 (mejor de 5). Por defecto: 1 | Al menos un grupo usa vacas |
+| Vacas | Opción **«Vacas para ganar»**: 1 (sin vacas), 2 (mejor de 3) o 3 (mejor de 5). Por defecto: 1 | Al menos un grupo usa vacas |
 | Anotación | Lance a lance, con cantidad libre | Los jugadores no piden «sumar al final de la mano» |
 | Órdago | Gana la partida/juego en curso quien lo gana | Ningún grupo usa otra regla |
 | Corrección | Deshacer + ajuste manual ±1 | Nadie pide edición libre del marcador |
