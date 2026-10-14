@@ -51,5 +51,6 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 - [x] **[a cargo del titular]** Cuenta e IDs reales de AdMob; mensaje de consentimiento UMP publicado en AdMob (EEE/Reino Unido/Suiza).
 - [x] Política y soporte públicos en GitHub Pages (`PRIVACY_POLICY_URL` y `SUPPORT_URL` ya configurados).
 - [ ] **[a cargo del titular]** Revisión legal del [borrador](privacidad.md) y cumplimentar la ficha de privacidad según §4.
-- [ ] Probar en un dispositivo con región EEE: aparece el formulario UMP y «Revisar consentimiento» funciona.
+- [x] Probar en un dispositivo: aparece el formulario UMP y se muestra el banner (confirmado por el titular el 2026-10-14).
+- [ ] Comprobar que «Revisar consentimiento» en Ajustes reabre el formulario.
 - [ ] Revisar `PrivacyInfo.xcprivacy` y la ficha al actualizar GoogleMobileAds.
