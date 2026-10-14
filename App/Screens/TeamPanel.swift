@@ -14,6 +14,7 @@ struct TeamPanel: View {
     let lance: Lance
     let enabled: Bool
     let onScore: (Int) -> Void
+    let onMore: () -> Void
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: Metrics.spacingS), count: 3)
 
@@ -50,6 +51,9 @@ struct TeamPanel: View {
                         .buttonStyle(AmountButtonStyle(team: team))
                         .accessibilityLabel("Apuntar \(amount) de \(lance.displayName) a \(name)")
                 }
+                Button("Más", action: onMore)
+                    .buttonStyle(AmountButtonStyle(team: team, compact: true))
+                    .accessibilityLabel("Otra cantidad para \(name)")
             }
             .disabled(!enabled)
         }
@@ -94,11 +98,12 @@ struct ProgressMeter: View {
 /// Botón de cantidad: grande, con el color del equipo al pulsar.
 struct AmountButtonStyle: ButtonStyle {
     let team: TeamID
+    var compact = false
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.title2.weight(.heavy))
+            .font(compact ? .subheadline.weight(.bold) : .title2.weight(.heavy))
             .foregroundStyle(configuration.isPressed ? Theme.onAccent : Theme.text)
             .frame(maxWidth: .infinity, minHeight: Metrics.minTapTarget)
             .background(
