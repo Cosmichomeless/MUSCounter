@@ -1,0 +1,11 @@
+// Ajustes comunes a Debug y Release. Sin secretos: los valores sensibles van en Secrets.xcconfig (ignorado por git).
+APP_DISPLAY_NAME = MUSCounter
+PRODUCT_BUNDLE_IDENTIFIER = com.cosmichomeless.muscounter
+IPHONEOS_DEPLOYMENT_TARGET = 17.0
+MARKETING_VERSION = 0.1.0
+CURRENT_PROJECT_VERSION = 1
+TARGETED_DEVICE_FAMILY = 1
+SWIFT_VERSION = 5.0
+DEVELOPMENT_TEAM =
+
+#include? "Secrets.xcconfig"

@@ -1,0 +1,50 @@
+# Compilación y builds de prueba
+
+## Requisitos
+
+- macOS con Xcode 16 o superior.
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen): `brew install xcodegen`.
+- Para builds firmadas: una cuenta de Apple Developer.
+
+## Compilar en local
+
+```bash
+xcodegen generate              # crea MUSCounter.xcodeproj desde project.yml
+open MUSCounter.xcodeproj      # Run en un simulador de iPhone (iOS 17+)
+```
+
+Ejecutar todas las pruebas, igual que la CI:
+
+```bash
+(cd Packages/MusCore && swift test)   # lógica de reglas y persistencia
+./scripts/test-app.sh                 # compila Release + pruebas de la app en simulador
+```
+
+## Configuración fijada
+
+| Ajuste | Valor | Dónde |
+|---|---|---|
+| Bundle ID | `com.cosmichomeless.muscounter` (provisional hasta cerrar el nombre) | `Config/Shared.xcconfig` |
+| iOS mínimo | 17.0 | `project.yml`, `Config/Shared.xcconfig` |
+| Dispositivos | solo iPhone | `Config/Shared.xcconfig` |
+| Versión / build | `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` | `Config/Shared.xcconfig` |
+| Debug / Release | ajustes propios de cada configuración | `Config/Debug.xcconfig`, `Config/Release.xcconfig` |
+
+## Secretos y certificados
+
+**No se guardan en el repositorio.** `.gitignore` excluye `*.p12`, `*.cer`, `*.mobileprovision`, `*.p8`, `.env` y `Secrets.xcconfig`.
+
+- Local: copia `Config/Secrets.xcconfig.example` a `Config/Secrets.xcconfig` y rellena `DEVELOPMENT_TEAM`.
+- Certificados y perfiles: gestionados por Xcode («Automatically manage signing») en el llavero local.
+- CI: cualquier secreto futuro (clave de App Store Connect) irá en GitHub Actions Secrets.
+
+## Generar una build de prueba (TestFlight)
+
+1. Sube `CURRENT_PROJECT_VERSION` en `Config/Shared.xcconfig` (cada subida necesita un número de build nuevo).
+2. `DEVELOPMENT_TEAM=XXXXXXXXXX ./scripts/archive.sh` → crea `build/MUSCounter.xcarchive`.
+3. Xcode → Window → Organizer → Archives → *Distribute App* → *App Store Connect* → *Upload*.
+4. En App Store Connect → TestFlight, añade la build al grupo de pruebas internas.
+
+## CI
+
+`.github/workflows/ci.yml` ejecuta en cada PR: comprobación de enlaces de documentación, `swift test` de `MusCore` y `scripts/test-app.sh` (Release + pruebas en simulador).
