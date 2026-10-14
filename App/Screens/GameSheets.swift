@@ -5,11 +5,17 @@ import MusCore
 enum GameSheet: Identifiable {
     case amount(TeamID)
     case ordago
+    case log
+    case menu
+    case adjust
 
     var id: String {
         switch self {
         case let .amount(team): return "amount-\(team.rawValue)"
         case .ordago: return "ordago"
+        case .log: return "log"
+        case .menu: return "menu"
+        case .adjust: return "adjust"
         }
     }
 }

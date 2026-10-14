@@ -3,6 +3,11 @@ import Observation
 import MusCore
 
 /// Estado de la app: qué pantalla se muestra y la partida actual. Toda la lógica de reglas vive en `MusCore`.
+struct Toast: Identifiable, Equatable {
+    let id = UUID()
+    let message: String
+}
+
 @MainActor
 @Observable
 final class AppModel {
@@ -19,6 +24,8 @@ final class AppModel {
     var selectedLance: Lance = .grande
     /// Hoja abierta sobre el marcador (cantidad libre u órdago).
     var sheet: GameSheet?
+    /// Aviso temporal con «Deshacer» tras la última anotación.
+    var toast: Toast?
     /// Mensaje de error para mostrar al usuario (nil si no hay).
     var errorMessage: String?
 
@@ -84,14 +91,71 @@ final class AppModel {
         perform { try $0.declareOrdago(winner: winner) }
     }
 
+    /// Corrección manual del tanteo de un equipo.
+    func adjust(_ team: TeamID, by delta: Int) {
+        perform { try $0.adjust(team: team, by: delta) }
+    }
+
+    /// Revierte exactamente la última acción.
+    func undo() {
+        guard var updated = game else { return }
+        do {
+            try updated.undo()
+            try repository.update(updated)
+            game = updated
+            toast = nil
+            errorMessage = nil
+        } catch let error as ScoringError {
+            errorMessage = Self.message(for: error)
+        } catch {
+            errorMessage = "No se pudo guardar la partida en el dispositivo."
+        }
+    }
+
+    /// Reinicia la partida en curso (se descarta la anterior).
+    func restartGame() {
+        do {
+            game = try repository.restartActiveGame()
+            toast = nil
+            errorMessage = nil
+        } catch {
+            errorMessage = "No se pudo reiniciar la partida."
+        }
+    }
+
+    /// Abandona la partida: queda en el historial como abandonada.
+    func abandonGame() {
+        perform { try $0.abandon() }
+        guard game?.status == .abandoned else { return }
+        game = nil
+        toast = nil
+        screen = .home
+    }
+
+    /// Borra la partida en curso sin guardarla.
+    func deleteGame() {
+        do {
+            try repository.discardActiveGame()
+            game = nil
+            toast = nil
+            screen = .home
+        } catch {
+            errorMessage = "No se pudo borrar la partida."
+        }
+    }
+
     /// Aplica un cambio a la partida y lo guarda. Si falla (regla o guardado) el estado no cambia.
     private func perform(_ change: (inout Game) throws -> Void) {
         guard var updated = game else { return }
         do {
+            let before = updated.actions.count
             try change(&updated)
             try repository.update(updated)
             game = updated
             errorMessage = nil
+            if updated.actions.count > before, let last = updated.actions.last, updated.status != .abandoned {
+                toast = Toast(message: ActionText.summary(last, game: updated))
+            }
         } catch let error as ScoringError {
             errorMessage = Self.message(for: error)
         } catch {
