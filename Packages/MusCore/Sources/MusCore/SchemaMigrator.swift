@@ -32,6 +32,15 @@ public struct SchemaMigrator {
             ]
             return migrated
         },
+        // v2 → v3: preferencias de háptica y sonido (háptica sí, sonido no).
+        2: { document in
+            var migrated = document
+            var preferences = migrated["preferences"] as? [String: Any] ?? [:]
+            preferences["hapticsEnabled"] = preferences["hapticsEnabled"] ?? Preferences.standard.hapticsEnabled
+            preferences["soundEnabled"] = preferences["soundEnabled"] ?? Preferences.standard.soundEnabled
+            migrated["preferences"] = preferences
+            return migrated
+        },
     ])
 
     public func migrate(_ data: Data) throws -> Data {

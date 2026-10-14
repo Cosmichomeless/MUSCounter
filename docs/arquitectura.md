@@ -25,7 +25,7 @@ Permite `@Observable`, `ContentUnavailableView` y las APIs modernas de SwiftUI. 
 ### D4. Persistencia en JSON versionado (sin SwiftData/CoreData)
 - Los datos son pocos y simples (una partida activa + historial).
 - Cada fichero lleva `schemaVersion`; un migrador explícito convierte versiones anteriores.
-- Esquema actual: **v2**. Guarda la partida activa, el historial y las **preferencias** (tantos de la vaca, vacas para ganar y tema). La migración v1 → v2 añade las preferencias predeterminadas.
+- Esquema actual: **v3**. Guarda la partida activa, el historial y las **preferencias** (tantos de la vaca, vacas para ganar, tema, háptica y sonido). La migración v1 → v2 añade las preferencias predeterminadas; v2 → v3 añade háptica (activada) y sonido (desactivado).
 - Las preferencias solo se usan al crear partidas nuevas: las partidas en curso o guardadas conservan sus reglas.
 - «Nueva partida» y «Opciones de la partida» parten de las preferencias; la revancha y «Nueva partida» desde el resultado conservan la configuración de la partida terminada.
 - Es trivial de probar en `MusCore` (sin framework de persistencia) y de borrar por completo.
@@ -39,8 +39,11 @@ El `.xcodeproj` produce conflictos de fusión constantes. `project.yml` es legib
 - Beta cerrada (M3): grupo externo.
 - Firma: certificados y perfiles **nunca** en el repositorio; se gestionan en el llavero local o en secretos de CI.
 
-### D7. Marcador sin red ni cuenta; anuncios solo fuera del marcador
-El marcador, el historial y la persistencia no dependen de la red ni de ninguna cuenta. Los anuncios (SDK de terceros) viven aislados en las pantallas de Inicio, Historial y victoria; un fallo o la falta de red nunca afecta al marcador. La ficha de privacidad debe declarar los datos del SDK.
+### D7. Sin cuenta ni analítica propia; la red solo para anuncios
+El marcador funciona sin red y sin cuenta. La única conexión es la de los banners de AdMob (D8), aislada del resto. Ver [anuncios](anuncios.md).
+
+### D8. Anuncios en un módulo aislado
+`Packages/MusAds` es el único que importa el SDK de Google (AdMob y UMP). `MusCore` y el marcador no lo conocen; sin red, sin consentimiento o con un fallo no se muestra nada y la app se comporta igual. `scripts/check_ads_isolation.py` lo vigila en CI.
 
 ## Convenciones
 

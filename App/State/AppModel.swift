@@ -16,6 +16,7 @@ final class AppModel {
     }
 
     private let repository: GameRepository
+    private let feedback: FeedbackPlayer
 
     var screen: Screen = .home
     var game: Game?
@@ -33,8 +34,9 @@ final class AppModel {
     /// Mensaje de error para mostrar al usuario (nil si no hay).
     var errorMessage: String?
 
-    init(repository: GameRepository) {
+    init(repository: GameRepository, feedback: FeedbackPlayer? = nil) {
         self.repository = repository
+        self.feedback = feedback ?? SystemFeedback()
         self.game = repository.activeGame
         self.history = repository.history
         self.preferences = repository.preferences
@@ -238,6 +240,12 @@ final class AppModel {
         }
     }
 
+    /// Respuesta háptica y sonora, cada una solo si está activada en las preferencias.
+    private func play(_ event: FeedbackEvent) {
+        if preferences.hapticsEnabled { feedback.haptic(event) }
+        if preferences.soundEnabled { feedback.sound(event) }
+    }
+
     /// Aplica un cambio a la partida y lo guarda. Si falla (regla o guardado) el estado no cambia.
     private func perform(_ change: (inout Game) throws -> Void) {
         guard var updated = game else { return }
@@ -250,10 +258,13 @@ final class AppModel {
             errorMessage = nil
             if updated.actions.count > before, let last = updated.actions.last, updated.status != .abandoned {
                 toast = Toast(message: ActionText.summary(last, game: updated))
+                // Los ajustes manuales son correcciones: no se celebran.
+                if updated.isInProgress, last.kind != .adjustment { play(.scored) }
             }
             if case .finished = updated.status {
                 toast = nil
                 screen = .result
+                if updated.actions.count > before { play(.victory) }
             }
         } catch let error as ScoringError {
             errorMessage = Self.message(for: error)

@@ -17,6 +17,8 @@ final class DesignTokensTests: XCTestCase {
             ("secundario/tarjeta", p.mutedText, p.card),
             ("secundario/tarjeta elevada", p.mutedText, p.cardRaised),
             ("texto sobre acento", p.onAccent, p.accent),
+            ("texto sobre equipo 1 (botón pulsado)", p.onAccent, p.teamFirst),
+            ("texto sobre equipo 2 (botón pulsado)", p.onAccent, p.teamSecond),
             ("peligro/fondo", p.danger, p.background),
             ("peligro/tarjeta", p.danger, p.card),
         ]
@@ -47,5 +49,6 @@ final class DesignTokensTests: XCTestCase {
 
     func testMinTapTargetMeetsAppleGuideline() {
         XCTAssertGreaterThanOrEqual(Metrics.minTapTarget, 44)
+        XCTAssertGreaterThanOrEqual(Metrics.minSegmentHeight, 44)
     }
 }

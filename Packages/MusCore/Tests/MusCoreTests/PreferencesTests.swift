@@ -92,6 +92,40 @@ final class PreferencesTests: XCTestCase {
         XCTAssertEqual(loaded.activeGame, game)
     }
 
+    func testFeedbackDefaultsAreHapticsOnAndSoundOff() {
+        XCTAssertTrue(Preferences.standard.hapticsEnabled)
+        XCTAssertFalse(Preferences.standard.soundEnabled)
+    }
+
+    func testFeedbackPreferencesAreRememberedBetweenSessions() throws {
+        let repo = try repository()
+        try repo.updatePreferences(Preferences(hapticsEnabled: false, soundEnabled: true))
+        let reopened = try repository()
+        XCTAssertFalse(reopened.preferences.hapticsEnabled)
+        XCTAssertTrue(reopened.preferences.soundEnabled)
+    }
+
+    func testVersionTwoFileMigratesWithDefaultFeedbackAndKeepsOtherPreferences() throws {
+        let game = try Game(teamNames: PerTeam("A", "B"), rules: .standard, createdAt: Date(timeIntervalSince1970: 1_700_000_000))
+        let current = AppData(activeGame: game, history: [], preferences: Preferences(goal: 30, vacasToWin: 2, theme: .dark))
+        let encoded = try FileAppDataStore.makeEncoder().encode(current)
+        var document = try XCTUnwrap(JSONSerialization.jsonObject(with: encoded) as? [String: Any])
+        document["schemaVersion"] = 2
+        // Tal y como lo escribía la versión 2: preferencias sin háptica ni sonido.
+        document["preferences"] = ["goal": 30, "vacasToWin": 2, "theme": "dark"]
+        try JSONSerialization.data(withJSONObject: document).write(to: fileURL)
+
+        let loaded = try FileAppDataStore(fileURL: fileURL).load()
+        XCTAssertEqual(loaded.schemaVersion, AppData.currentSchemaVersion)
+        XCTAssertEqual(loaded.preferences, Preferences(goal: 30, vacasToWin: 2, theme: .dark, hapticsEnabled: true, soundEnabled: false))
+        XCTAssertEqual(loaded.activeGame, game)
+    }
+
+    func testPreferencesWithoutFeedbackKeysStillDecode() throws {
+        let json = Data(#"{"goal":40,"vacasToWin":1,"theme":"system"}"#.utf8)
+        XCTAssertEqual(try JSONDecoder().decode(Preferences.self, from: json), .standard)
+    }
+
     func testDraftFromPreferencesUsesTheirRulesAndDefaultNames() {
         let draft = GameSetupDraft(preferences: Preferences(goal: 30, vacasToWin: 2, theme: .dark))
         XCTAssertEqual(draft.rules, GameRules(goal: 30, vacasToWin: 2))

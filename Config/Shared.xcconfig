@@ -9,3 +9,11 @@ SWIFT_VERSION = 5.0
 DEVELOPMENT_TEAM =
 
 #include? "Secrets.xcconfig"
+
+// AdMob: por defecto, identificadores de PRUEBA de Google. Los reales se ponen en Secrets.xcconfig (Release).
+ADMOB_APP_ID = ca-app-pub-3940256099942544~1458002511
+ADMOB_BANNER_UNIT_ID = ca-app-pub-3940256099942544/2435281174
+
+// Privacidad y soporte (páginas públicas en GitHub Pages; en xcconfig «//» es un comentario, de ahí el «$()»).
+PRIVACY_POLICY_URL = https:/$()/cosmichomeless.github.io/MUSCounter/privacy/
+SUPPORT_URL = https:/$()/cosmichomeless.github.io/MUSCounter/support/

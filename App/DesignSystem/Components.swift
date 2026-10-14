@@ -21,6 +21,7 @@ private struct MusButtonBody: View {
     let configuration: ButtonStyleConfiguration
     @Environment(\.isEnabled) private var isEnabled
     @Environment(\.isFocused) private var isFocused
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous)
@@ -62,8 +63,8 @@ private struct MusButtonBody: View {
             }
             .contentShape(shape)
             .opacity(isEnabled ? (configuration.isPressed ? 0.8 : 1) : 0.4)
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed && !reduceMotion ? 0.97 : 1)
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.12), value: configuration.isPressed)
     }
 }
 
@@ -124,7 +125,12 @@ struct TeamMarker: View {
 /// Número de tanteo grande, con cifras de ancho fijo que escalan con el tamaño de texto.
 struct ScoreText: View {
     let value: Int
-    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 120
+    @ScaledMetric private var size: CGFloat
+
+    init(value: Int, baseSize: CGFloat = 120) {
+        self.value = value
+        _size = ScaledMetric(wrappedValue: baseSize, relativeTo: .largeTitle)
+    }
 
     var body: some View {
         Text("\(value)")
@@ -144,13 +150,19 @@ struct MusOption<Value: Hashable>: Identifiable {
     var id: Value { value }
 }
 
-/// Selector de una opción entre varias, con zonas táctiles de 48 pt.
+/// Selector de una opción entre varias, con zonas táctiles de 48 pt. Con letra de accesibilidad las
+/// opciones se apilan para que el texto no se recorte. `title` es el nombre que lee VoiceOver.
 struct MusSegmented<Value: Hashable>: View {
     let options: [MusOption<Value>]
     @Binding var selection: Value
+    var axis: Axis = .horizontal
+    var title: String?
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var effectiveAxis: Axis { dynamicTypeSize.isAccessibilitySize ? .vertical : axis }
 
     var body: some View {
-        HStack(spacing: Metrics.spacingXS) {
+        stack {
             ForEach(options) { option in
                 let selected = option.value == selection
                 Button {
@@ -158,10 +170,10 @@ struct MusSegmented<Value: Hashable>: View {
                 } label: {
                     Text(option.label)
                         .font(.subheadline.weight(.bold))
-                        .lineLimit(1)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                         .minimumScaleFactor(0.7)
                         .foregroundStyle(selected ? Theme.onAccent : Theme.text)
-                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .frame(maxWidth: .infinity, minHeight: Metrics.minSegmentHeight, maxHeight: effectiveAxis == .vertical ? .infinity : nil)
                         .background(
                             selected ? Theme.accent : Color.clear,
                             in: RoundedRectangle(cornerRadius: Metrics.cornerRadius - 6, style: .continuous)
@@ -174,6 +186,16 @@ struct MusSegmented<Value: Hashable>: View {
         }
         .padding(Metrics.spacingXS)
         .background(Theme.card, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel(title ?? "")
+    }
+
+    @ViewBuilder private func stack<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        if effectiveAxis == .vertical {
+            VStack(spacing: Metrics.spacingXS, content: content)
+        } else {
+            HStack(spacing: Metrics.spacingXS, content: content)
+        }
     }
 }
 

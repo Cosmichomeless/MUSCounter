@@ -3,3 +3,7 @@
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
 SWIFT_OPTIMIZATION_LEVEL = -Onone
 ENABLE_TESTABILITY = YES
+
+// En Debug siempre se usan los identificadores de prueba, aunque Secrets.xcconfig defina los reales.
+ADMOB_APP_ID = ca-app-pub-3940256099942544~1458002511
+ADMOB_BANNER_UNIT_ID = ca-app-pub-3940256099942544/2435281174

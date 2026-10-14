@@ -84,27 +84,30 @@ struct AdjustSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Metrics.spacingL) {
-            Text("Corregir tanteo").font(.title2.bold())
-            Text("Suma o resta un tanto al equipo que corresponda.").foregroundStyle(Theme.mutedText)
-            ForEach(TeamID.allCases, id: \.self) { team in
-                HStack(spacing: Metrics.spacingM) {
-                    TeamMarker(team: team)
-                    Text(game.teamNames[team]).font(.headline).lineLimit(1)
-                    Spacer(minLength: 0)
-                    stepper("minus", "Restar un tanto a \(game.teamNames[team])") { model.adjust(team, by: -1) }
-                    Text("\(game.state.score[team])")
-                        .font(.title2.weight(.bold).monospacedDigit())
-                        .frame(minWidth: 44)
-                    stepper("plus", "Sumar un tanto a \(game.teamNames[team])") { model.adjust(team, by: 1) }
+        ScrollView {
+            VStack(alignment: .leading, spacing: Metrics.spacingL) {
+                Text("Corregir tanteo").font(.title2.bold())
+                Text("Suma o resta un tanto al equipo que corresponda.").foregroundStyle(Theme.mutedText)
+                ForEach(TeamID.allCases, id: \.self) { team in
+                    HStack(spacing: Metrics.spacingM) {
+                        TeamMarker(team: team)
+                        Text(game.teamNames[team]).font(.headline).lineLimit(1)
+                        Spacer(minLength: 0)
+                        stepper("minus", "Restar un tanto a \(game.teamNames[team])") { model.adjust(team, by: -1) }
+                        Text("\(game.state.score[team])")
+                            .font(.title2.weight(.bold).monospacedDigit())
+                            .frame(minWidth: 44)
+                        stepper("plus", "Sumar un tanto a \(game.teamNames[team])") { model.adjust(team, by: 1) }
+                    }
+                    .musCard()
                 }
-                .musCard()
+                if let message = model.errorMessage {
+                    ErrorBanner(message: message)
+                }
+                Button("Cerrar") { dismiss() }.buttonStyle(.musSecondary)
             }
-            if let message = model.errorMessage {
-                ErrorBanner(message: message)
-            }
-            Button("Cerrar") { dismiss() }.buttonStyle(.musSecondary)
         }
+        .scrollBounceBehavior(.basedOnSize)
         .padding(Metrics.spacingL)
         .foregroundStyle(Theme.text)
         .presentationDetents([.medium])

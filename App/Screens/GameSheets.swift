@@ -40,34 +40,37 @@ struct AmountSheet: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Metrics.spacingL) {
-            Text("Otra cantidad").font(.title2.bold())
+        ScrollView {
+            VStack(alignment: .leading, spacing: Metrics.spacingL) {
+                Text("Otra cantidad").font(.title2.bold())
 
-            HStack(spacing: Metrics.spacingXL) {
-                stepButton("minus", label: "Menos") { amount = max(1, amount - 1) }
-                    .disabled(amount <= 1)
-                Text("\(amount)")
-                    .font(.system(size: 60, weight: .black, design: .rounded))
-                    .monospacedDigit()
-                    .frame(minWidth: 90)
-                    .accessibilityLabel("\(amount) tantos")
-                stepButton("plus", label: "Más") { amount = min(game.rules.goal, amount + 1) }
-                    .disabled(amount >= game.rules.goal)
-            }
-            .frame(maxWidth: .infinity)
-
-            summary
-
-            HStack(spacing: Metrics.spacingM) {
-                Button("Cancelar") { dismiss() }.buttonStyle(.musSecondary)
-                Button("Apuntar") {
-                    model.score(amount, to: team)
-                    dismiss()
+                HStack(spacing: Metrics.spacingXL) {
+                    stepButton("minus", label: "Menos") { amount = max(1, amount - 1) }
+                        .disabled(amount <= 1)
+                    Text("\(amount)")
+                        .font(.system(size: 60, weight: .black, design: .rounded))
+                        .monospacedDigit()
+                        .frame(minWidth: 90)
+                        .accessibilityLabel("\(amount) tantos")
+                    stepButton("plus", label: "Más") { amount = min(game.rules.goal, amount + 1) }
+                        .disabled(amount >= game.rules.goal)
                 }
-                .buttonStyle(.musPrimary)
-                .disabled({ if case .failure = preview { return true } else { return false } }())
+                .frame(maxWidth: .infinity)
+
+                summary
+
+                HStack(spacing: Metrics.spacingM) {
+                    Button("Cancelar") { dismiss() }.buttonStyle(.musSecondary)
+                    Button("Apuntar") {
+                        model.score(amount, to: team)
+                        dismiss()
+                    }
+                    .buttonStyle(.musPrimary)
+                    .disabled({ if case .failure = preview { return true } else { return false } }())
+                }
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
         .padding(Metrics.spacingL)
         .foregroundStyle(Theme.text)
         .presentationDetents([.medium])
@@ -115,45 +118,48 @@ struct OrdagoSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Metrics.spacingL) {
-            Text("¡Órdago!").font(.title2.bold())
-            Text("¿Quién gana el órdago? La vaca será para ese equipo.")
-                .foregroundStyle(Theme.mutedText)
+        ScrollView {
+            VStack(alignment: .leading, spacing: Metrics.spacingL) {
+                Text("¡Órdago!").font(.title2.bold())
+                Text("¿Quién gana el órdago? La vaca será para ese equipo.")
+                    .foregroundStyle(Theme.mutedText)
 
-            HStack(spacing: Metrics.spacingM) {
-                ForEach(TeamID.allCases, id: \.self) { team in
-                    Button {
-                        winner = team
-                    } label: {
-                        HStack(spacing: Metrics.spacingS) {
-                            TeamMarker(team: team)
-                            Text(game.teamNames[team]).lineLimit(1).minimumScaleFactor(0.7)
+                HStack(spacing: Metrics.spacingM) {
+                    ForEach(TeamID.allCases, id: \.self) { team in
+                        Button {
+                            winner = team
+                        } label: {
+                            HStack(spacing: Metrics.spacingS) {
+                                TeamMarker(team: team)
+                                Text(game.teamNames[team]).lineLimit(1).minimumScaleFactor(0.7)
+                            }
+                            .frame(maxWidth: .infinity, minHeight: Metrics.minTapTarget)
+                            .background(
+                                winner == team ? Theme.accent : Theme.cardRaised,
+                                in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous)
+                            )
+                            .foregroundStyle(winner == team ? Theme.onAccent : Theme.text)
+                            .font(.headline)
                         }
-                        .frame(maxWidth: .infinity, minHeight: Metrics.minTapTarget)
-                        .background(
-                            winner == team ? Theme.accent : Theme.cardRaised,
-                            in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous)
-                        )
-                        .foregroundStyle(winner == team ? Theme.onAccent : Theme.text)
-                        .font(.headline)
+                        .buttonStyle(.plain)
+                        .accessibilityAddTraits(winner == team ? .isSelected : [])
                     }
-                    .buttonStyle(.plain)
-                    .accessibilityAddTraits(winner == team ? .isSelected : [])
                 }
-            }
 
-            summary
+                summary
 
-            HStack(spacing: Metrics.spacingM) {
-                Button("Cancelar") { dismiss() }.buttonStyle(.musSecondary)
-                Button("Confirmar órdago") {
-                    if let winner { model.declareOrdago(winner: winner) }
-                    dismiss()
+                HStack(spacing: Metrics.spacingM) {
+                    Button("Cancelar") { dismiss() }.buttonStyle(.musSecondary)
+                    Button("Confirmar órdago") {
+                        if let winner { model.declareOrdago(winner: winner) }
+                        dismiss()
+                    }
+                    .buttonStyle(.musPrimary)
+                    .disabled(winner == nil)
                 }
-                .buttonStyle(.musPrimary)
-                .disabled(winner == nil)
             }
         }
+        .scrollBounceBehavior(.basedOnSize)
         .padding(Metrics.spacingL)
         .foregroundStyle(Theme.text)
         .presentationDetents([.medium])

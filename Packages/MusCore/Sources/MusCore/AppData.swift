@@ -2,7 +2,7 @@ import Foundation
 
 /// Todo lo que la app guarda en el dispositivo: la partida en curso, el historial y las preferencias.
 public struct AppData: Codable, Equatable, Sendable {
-    public static let currentSchemaVersion = 2
+    public static let currentSchemaVersion = 3
 
     public var schemaVersion: Int
     public var activeGame: Game?

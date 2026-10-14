@@ -13,37 +13,28 @@ struct TeamPanel: View {
     let isWinner: Bool
     let lance: Lance
     let enabled: Bool
+    /// Versión para pantalla apaisada: cifra más pequeña para que todo quepa en poca altura.
+    var compact = false
     let onScore: (Int) -> Void
     let onMore: () -> Void
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: Metrics.spacingS), count: 3)
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var columns: [GridItem] {
+        let count = dynamicTypeSize.isAccessibilitySize ? 2 : 3
+        return Array(repeating: GridItem(.flexible(), spacing: Metrics.spacingS), count: count)
+    }
+
+    /// Lo que lee VoiceOver al enfocar el marcador del equipo.
+    private var accessibleValue: String {
+        AccessibilityText.teamValue(
+            score: score, goal: goal, vacas: vacas, vacasToWin: vacasToWin, isLeading: isLeading, isWinner: isWinner
+        )
+    }
 
     var body: some View {
         VStack(spacing: Metrics.spacingS) {
-            HStack(spacing: Metrics.spacingS) {
-                TeamMarker(team: team)
-                Text(name)
-                    .font(.headline)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
-
-            ScoreText(value: score)
-                .frame(maxHeight: .infinity)
-
-            ProgressMeter(value: score, goal: goal, team: team)
-
-            HStack {
-                Text("\(score)/\(goal)")
-                Spacer(minLength: 0)
-                if vacasToWin > 1 {
-                    Text(String(repeating: "●", count: vacas) + String(repeating: "○", count: max(vacasToWin - vacas, 0)))
-                        .foregroundStyle(Theme.accent)
-                        .accessibilityHidden(true)
-                }
-            }
-            .font(.footnote)
-            .foregroundStyle(Theme.mutedText)
+            scoreSummary
 
             LazyVGrid(columns: columns, spacing: Metrics.spacingS) {
                 ForEach(lance.quickAmounts, id: \.self) { amount in
@@ -72,6 +63,47 @@ struct TeamPanel: View {
             }
         }
         .accessibilityElement(children: .contain)
+    }
+
+    /// Nombre, cifra, progreso y vacas: un único elemento para VoiceOver con el nombre como etiqueta
+    /// y el estado (tantos, vacas, quién va por delante) como valor.
+    private var scoreSummary: some View {
+        VStack(spacing: Metrics.spacingS) {
+            HStack(spacing: Metrics.spacingS) {
+                TeamMarker(team: team)
+                Text(name)
+                    .font(.headline)
+                    .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
+                    .minimumScaleFactor(0.7)
+                // La ventaja y la victoria se ven también sin color: icono distinto además del anillo dorado.
+                if isWinner {
+                    Image(systemName: "trophy.fill").foregroundStyle(Theme.accent)
+                } else if isLeading {
+                    Image(systemName: "arrow.up.circle.fill").foregroundStyle(Theme.accent)
+                }
+            }
+
+            ScoreText(value: score, baseSize: compact ? 64 : 120)
+                .frame(maxHeight: .infinity)
+
+            ProgressMeter(value: score, goal: goal, team: team)
+
+            HStack {
+                Text("\(score)/\(goal)")
+                Spacer(minLength: 0)
+                if vacasToWin > 1 {
+                    Text(String(repeating: "●", count: vacas) + String(repeating: "○", count: max(vacasToWin - vacas, 0)))
+                        .foregroundStyle(Theme.accent)
+                }
+            }
+            .font(.footnote)
+            .foregroundStyle(Theme.mutedText)
+        }
+        .frame(maxHeight: .infinity)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(name)
+        .accessibilityValue(accessibleValue)
+        .accessibilityAddTraits(.isHeader)
     }
 }
 
