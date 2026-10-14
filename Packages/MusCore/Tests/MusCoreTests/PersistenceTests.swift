@@ -87,6 +87,7 @@ final class PersistenceTests: XCTestCase {
         // Simula un fichero de la "versión 0" que guardaba las partidas bajo otra clave.
         let migrator = SchemaMigrator(currentVersion: AppData.currentSchemaVersion, steps: [
             0: { var d = $0; d["history"] = d.removeValue(forKey: "games") ?? []; return d },
+            1: { var d = $0; d["preferences"] = ["goal": 40, "vacasToWin": 1, "theme": "system"]; return d },
         ])
         try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try Data(#"{"games": []}"#.utf8).write(to: fileURL)

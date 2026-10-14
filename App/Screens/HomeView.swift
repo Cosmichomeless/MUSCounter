@@ -35,10 +35,16 @@ struct HomeView: View {
             }
 
             VStack(spacing: Metrics.spacingM) {
-                Button("Nueva partida") { requestStart(.standard) }
+                Button("Nueva partida") { requestStart(GameSetupDraft(preferences: model.preferences)) }
                     .buttonStyle(.musPrimary)
                 Button("Opciones de la partida") { model.openSetup() }
                     .buttonStyle(.musSecondary)
+                HStack(spacing: Metrics.spacingM) {
+                    Button("Historial") { model.openHistory() }
+                        .buttonStyle(.musSecondary)
+                    Button("Ajustes") { model.openSettings() }
+                        .buttonStyle(.musSecondary)
+                }
             }
         }
         .padding(Metrics.spacingL)

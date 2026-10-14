@@ -13,6 +13,13 @@ public final class GameRepository {
 
     public var activeGame: Game? { data.activeGame }
     public var history: [Game] { data.history }
+    public var preferences: Preferences { data.preferences }
+
+    /// Guarda las preferencias. Solo afectan a las partidas que se creen a partir de ahora.
+    public func updatePreferences(_ preferences: Preferences) throws {
+        guard preferences.isValid else { throw ScoringError.invalidRules }
+        try commit { $0.preferences = preferences }
+    }
 
     /// Empieza una partida nueva. Si había otra en curso se archiva como abandonada: nunca se pierde en silencio.
     @discardableResult
@@ -69,7 +76,7 @@ public final class GameRepository {
         try commit { $0.history = [] }
     }
 
-    /// Borra todos los datos locales: historial y partida en curso.
+    /// Borra todos los datos locales: historial, partida en curso y preferencias.
     public func deleteAllData() throws {
         try store.deleteAll()
         data = .empty

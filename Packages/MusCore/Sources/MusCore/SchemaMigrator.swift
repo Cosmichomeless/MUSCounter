@@ -21,7 +21,18 @@ public struct SchemaMigrator {
     }
 
     /// Migrador de la app. Cuando se cambie el esquema: subir `currentSchemaVersion` y añadir aquí el paso.
-    public static let standard = SchemaMigrator(currentVersion: AppData.currentSchemaVersion)
+    public static let standard = SchemaMigrator(currentVersion: AppData.currentSchemaVersion, steps: [
+        // v1 → v2: aparecen las preferencias; los ficheros antiguos arrancan con las predeterminadas.
+        1: { document in
+            var migrated = document
+            migrated["preferences"] = migrated["preferences"] ?? [
+                "goal": Preferences.standard.goal,
+                "vacasToWin": Preferences.standard.vacasToWin,
+                "theme": Preferences.standard.theme.rawValue,
+            ]
+            return migrated
+        },
+    ])
 
     public func migrate(_ data: Data) throws -> Data {
         guard var document = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {

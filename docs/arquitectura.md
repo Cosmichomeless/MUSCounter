@@ -25,6 +25,9 @@ Permite `@Observable`, `ContentUnavailableView` y las APIs modernas de SwiftUI. 
 ### D4. Persistencia en JSON versionado (sin SwiftData/CoreData)
 - Los datos son pocos y simples (una partida activa + historial).
 - Cada fichero lleva `schemaVersion`; un migrador explícito convierte versiones anteriores.
+- Esquema actual: **v2**. Guarda la partida activa, el historial y las **preferencias** (tantos de la vaca, vacas para ganar y tema). La migración v1 → v2 añade las preferencias predeterminadas.
+- Las preferencias solo se usan al crear partidas nuevas: las partidas en curso o guardadas conservan sus reglas.
+- «Nueva partida» y «Opciones de la partida» parten de las preferencias; la revancha y «Nueva partida» desde el resultado conservan la configuración de la partida terminada.
 - Es trivial de probar en `MusCore` (sin framework de persistencia) y de borrar por completo.
 - Escritura atómica (`.atomic`) para no perder la partida si la app se cierra a medias.
 
