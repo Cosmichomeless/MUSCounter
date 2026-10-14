@@ -76,4 +76,6 @@ public enum Metrics {
     public static let cornerRadius: Double = 18
     /// Alto mínimo de cualquier control tocable (Apple recomienda 44).
     public static let minTapTarget: Double = 52
+    /// Alto mínimo de cada opción de un selector segmentado (sigue por encima de los 44 pt de Apple).
+    public static let minSegmentHeight: Double = 48
 }

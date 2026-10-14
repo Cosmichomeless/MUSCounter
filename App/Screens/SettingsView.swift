@@ -41,7 +41,8 @@ struct SettingsView: View {
                     field("Tantos de la vaca", note: "Predeterminado: 40 tantos.") {
                         MusSegmented(
                             options: GameRules.allowedGoals.map { MusOption(value: $0, label: "\($0)") },
-                            selection: binding(\.goal)
+                            selection: binding(\.goal),
+                            title: "Tantos de la vaca"
                         )
                     }
                     field("Vacas para ganar", note: "Predeterminado: sin vacas, una sola vaca decide la partida.") {
@@ -51,7 +52,8 @@ struct SettingsView: View {
                                 MusOption(value: 2, label: "2 de 3"),
                                 MusOption(value: 3, label: "3 de 5"),
                             ],
-                            selection: binding(\.vacasToWin)
+                            selection: binding(\.vacasToWin),
+                            title: "Vacas para ganar"
                         )
                     }
                     field("Tema", note: "Predeterminado: Sistema, que sigue el modo claro u oscuro del iPhone.") {
@@ -59,7 +61,8 @@ struct SettingsView: View {
                             options: [ThemePreference.system, .light, .dark].map {
                                 MusOption(value: $0, label: $0.displayName)
                             },
-                            selection: binding(\.theme)
+                            selection: binding(\.theme),
+                            title: "Tema"
                         )
                     }
 

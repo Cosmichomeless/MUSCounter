@@ -8,8 +8,13 @@ struct GameView: View {
     let model: AppModel
     @State private var confirmation: GameConfirmation?
     @Environment(\.verticalSizeClass) private var verticalSizeClass
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private var isLandscape: Bool { verticalSizeClass == .compact }
+    private var isLargeText: Bool { dynamicTypeSize.isAccessibilitySize }
+    /// El diseño apaisado de tres columnas solo cabe con letra normal; con letra de accesibilidad se usa
+    /// el diseño vertical (que se desplaza) para que ningún control quede recortado ni oculto.
+    private var isLandscape: Bool { verticalSizeClass == .compact && !isLargeText }
 
     var body: some View {
         if let game = model.game {
@@ -24,14 +29,18 @@ struct GameView: View {
                     UndoToast(message: toast.message) { model.undo() }
                         .padding(.horizontal, Metrics.spacingL)
                         .padding(.top, Metrics.spacingS)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                         .task(id: toast.id) {
                             try? await Task.sleep(for: .seconds(4))
                             if model.toast?.id == toast.id { model.toast = nil }
                         }
                 }
             }
-            .animation(.easeOut(duration: 0.2), value: model.toast)
+            .animation(reduceMotion ? nil : .easeOut(duration: 0.2), value: model.toast)
+            .onChange(of: model.toast?.id) { _, id in
+                guard id != nil, let game = model.game else { return }
+                announce(for: game)
+            }
             .confirmationDialog(
                 confirmation?.title ?? "",
                 isPresented: Binding(get: { confirmation != nil }, set: { if !$0 { confirmation = nil } }),
@@ -95,8 +104,13 @@ struct GameView: View {
         } onMore: {
             model.sheet = .amount(team)
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(game.teamNames[team]), \(game.state.score[team]) tantos")
+    }
+
+    /// Anuncia a VoiceOver el resultado de una anotación (la ventana de aviso desaparece sola).
+    private func announce(for game: Game) {
+        var text = model.toast?.message ?? ""
+        text += ". " + AccessibilityText.scoreboard(names: game.teamNames, score: game.state.score)
+        AccessibilityNotification.Announcement(text).post()
     }
 
     private func lanceBinding() -> Binding<Lance> {
@@ -148,7 +162,8 @@ struct GameView: View {
                         MusSegmented(
                             options: Lance.allCases.map { MusOption(value: $0, label: $0.displayName) },
                             selection: lanceBinding(),
-                            axis: .vertical
+                            axis: .vertical,
+                            title: "Lance"
                         )
                     }
                 }
@@ -177,15 +192,12 @@ struct GameView: View {
                 ErrorBanner(message: message)
             }
 
-            HStack(spacing: Metrics.spacingM) {
-                ForEach(TeamID.allCases, id: \.self) { team in
-                    teamPanel(game, team)
-                }
-            }
+            panels(game)
 
             MusSegmented(
                 options: Lance.allCases.map { MusOption(value: $0, label: $0.displayName) },
-                selection: lanceBinding()
+                selection: lanceBinding(),
+                title: "Lance"
             )
             .disabled(!game.isInProgress)
 
@@ -195,6 +207,19 @@ struct GameView: View {
             }
         }
         .padding(Metrics.spacingL)
+    }
+
+    /// Los dos paneles, uno junto al otro; con letra de accesibilidad, uno encima del otro.
+    @ViewBuilder private func panels(_ game: Game) -> some View {
+        if isLargeText {
+            VStack(spacing: Metrics.spacingM) {
+                ForEach(TeamID.allCases, id: \.self) { teamPanel(game, $0) }
+            }
+        } else {
+            HStack(spacing: Metrics.spacingM) {
+                ForEach(TeamID.allCases, id: \.self) { teamPanel(game, $0) }
+            }
+        }
     }
 
     private func iconButton(_ symbol: String, _ label: String, action: @escaping () -> Void) -> some View {
@@ -208,20 +233,40 @@ struct GameView: View {
         .accessibilityLabel(label)
     }
 
-    private func header(_ game: Game) -> some View {
-        HStack {
-            Button("Salir") { model.leaveGame() }
-                .buttonStyle(.musSecondary)
-                .fixedSize(horizontal: true, vertical: false)
-            Text(subtitle(game))
-                .font(.footnote)
-                .foregroundStyle(Theme.mutedText)
-                .frame(maxWidth: .infinity)
-                .multilineTextAlignment(.center)
-            iconButton("clock.arrow.circlepath", "Acciones recientes") { model.sheet = .log }
-            if game.isInProgress {
-                iconButton("ellipsis", "Menú de la partida") { model.sheet = .menu }
+    @ViewBuilder private func header(_ game: Game) -> some View {
+        if isLargeText {
+            VStack(spacing: Metrics.spacingS) {
+                HStack {
+                    Button("Salir") { model.leaveGame() }
+                        .buttonStyle(.musSecondary)
+                        .fixedSize(horizontal: true, vertical: false)
+                    Spacer(minLength: 0)
+                    headerIcons(game)
+                }
+                Text(subtitle(game))
+                    .font(.footnote)
+                    .foregroundStyle(Theme.mutedText)
+                    .multilineTextAlignment(.center)
             }
+        } else {
+            HStack {
+                Button("Salir") { model.leaveGame() }
+                    .buttonStyle(.musSecondary)
+                    .fixedSize(horizontal: true, vertical: false)
+                Text(subtitle(game))
+                    .font(.footnote)
+                    .foregroundStyle(Theme.mutedText)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                headerIcons(game)
+            }
+        }
+    }
+
+    @ViewBuilder private func headerIcons(_ game: Game) -> some View {
+        iconButton("clock.arrow.circlepath", "Acciones recientes") { model.sheet = .log }
+        if game.isInProgress {
+            iconButton("ellipsis", "Menú de la partida") { model.sheet = .menu }
         }
     }
 
@@ -237,6 +282,8 @@ struct GameView: View {
         }
         .musCard()
         .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isHeader)
+        .onAppear { AccessibilityNotification.Announcement(AccessibilityText.victory(winner: game.teamNames[winner], reason: reason)).post() }
     }
 
     private func subtitle(_ game: Game) -> String {

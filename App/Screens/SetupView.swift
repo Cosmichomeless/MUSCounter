@@ -30,7 +30,8 @@ struct SetupView: View {
                     field("Tantos de la vaca") {
                         MusSegmented(
                             options: GameRules.allowedGoals.map { MusOption(value: $0, label: "\($0)") },
-                            selection: $model.draft.goal
+                            selection: $model.draft.goal,
+                            title: "Tantos de la vaca"
                         )
                     }
                     field("Vacas para ganar") {
@@ -40,7 +41,8 @@ struct SetupView: View {
                                 MusOption(value: 2, label: "2 de 3"),
                                 MusOption(value: 3, label: "3 de 5"),
                             ],
-                            selection: $model.draft.vacasToWin
+                            selection: $model.draft.vacasToWin,
+                            title: "Vacas para ganar"
                         )
                         Text("«Sin vacas»: una sola vaca decide la partida.")
                             .font(.footnote)
