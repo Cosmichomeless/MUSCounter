@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Documentación
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar enlaces relativos
+        run: python3 scripts/check_docs.py
+
+  core:
+    name: Pruebas de MusCore
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: swift test
+        if: hashFiles('Packages/MusCore/Package.swift') != ''
+        working-directory: Packages/MusCore
+        run: swift test
+      - name: Sin paquete todavía
+        if: hashFiles('Packages/MusCore/Package.swift') == ''
+        run: echo "Packages/MusCore aún no existe; nada que probar."
+
+  app:
+    name: Compilación y pruebas de la app
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar XcodeGen
+        if: hashFiles('project.yml') != ''
+        run: brew install xcodegen
+      - name: Generar proyecto, compilar y probar
+        if: hashFiles('project.yml') != ''
+        run: ./scripts/test-app.sh
+      - name: Sin proyecto todavía
+        if: hashFiles('project.yml') == ''
+        run: echo "project.yml aún no existe; nada que compilar."
