@@ -2,16 +2,20 @@ import SwiftUI
 import MusCore
 
 /// Marcador principal: dos equipos lado a lado, selector de lance y botones de suma.
-/// Si el contenido no cabe (letra grande, horizontal) se desplaza en vez de recortarse.
+/// En vertical apila los controles; en horizontal (altura compacta) reparte tres columnas —equipo, lances, equipo—
+/// para que todo quepa sin desplazarse. Si aun así no cabe (letra muy grande) se desplaza en vez de recortarse.
 struct GameView: View {
     let model: AppModel
     @State private var confirmation: GameConfirmation?
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
+
+    private var isLandscape: Bool { verticalSizeClass == .compact }
 
     var body: some View {
         if let game = model.game {
             ViewThatFits(in: .vertical) {
                 content(game)
-                ScrollView { content(game).frame(minHeight: 640) }
+                ScrollView { content(game).frame(minHeight: isLandscape ? 340 : 640) }
             }
             .foregroundStyle(Theme.text)
             .musScreen()
@@ -65,7 +69,104 @@ struct GameView: View {
         }
     }
 
-    private func content(_ game: Game) -> some View {
+    @ViewBuilder private func content(_ game: Game) -> some View {
+        if isLandscape {
+            landscapeContent(game)
+        } else {
+            portraitContent(game)
+        }
+    }
+
+    private func teamPanel(_ game: Game, _ team: TeamID) -> some View {
+        TeamPanel(
+            team: team,
+            name: game.teamNames[team],
+            score: game.state.score[team],
+            goal: game.rules.goal,
+            vacas: game.state.vacas[team],
+            vacasToWin: game.rules.vacasToWin,
+            isLeading: game.state.score[team] > game.state.score[team.other] && game.isInProgress,
+            isWinner: game.state.winner == team,
+            lance: model.selectedLance,
+            enabled: game.isInProgress,
+            compact: isLandscape
+        ) { amount in
+            model.score(amount, to: team)
+        } onMore: {
+            model.sheet = .amount(team)
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityLabel("\(game.teamNames[team]), \(game.state.score[team]) tantos")
+    }
+
+    private func lanceBinding() -> Binding<Lance> {
+        Binding(get: { model.selectedLance }, set: { model.selectedLance = $0 })
+    }
+
+    private func undoButton(_ game: Game) -> some View {
+        Button { model.undo() } label: {
+            Label("Deshacer", systemImage: "arrow.uturn.backward")
+        }
+        .buttonStyle(.musSecondary)
+        .disabled(!game.canUndo)
+    }
+
+    private func ordagoButton(_ game: Game) -> some View {
+        Button("¡Órdago!") { model.sheet = .ordago }
+            .buttonStyle(.musDanger)
+            .disabled(!game.isInProgress)
+    }
+
+    /// Horizontal: barra superior con las acciones, y debajo equipo | lances | equipo.
+    private func landscapeContent(_ game: Game) -> some View {
+        VStack(spacing: Metrics.spacingS) {
+            HStack(spacing: Metrics.spacingS) {
+                Button("Salir") { model.leaveGame() }
+                    .buttonStyle(.musSecondary)
+                    .fixedSize(horizontal: true, vertical: false)
+                Text(subtitle(game))
+                    .font(.footnote)
+                    .foregroundStyle(Theme.mutedText)
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.8)
+                undoButton(game).frame(maxWidth: 170)
+                ordagoButton(game).frame(maxWidth: 150)
+                iconButton("clock.arrow.circlepath", "Acciones recientes") { model.sheet = .log }
+                if game.isInProgress {
+                    iconButton("ellipsis", "Menú de la partida") { model.sheet = .menu }
+                }
+            }
+
+            HStack(spacing: Metrics.spacingS) {
+                teamPanel(game, .first)
+
+                VStack(spacing: Metrics.spacingS) {
+                    if case let .finished(winner, reason) = game.status {
+                        winnerBanner(game, winner: winner, reason: reason)
+                    } else {
+                        MusSegmented(
+                            options: Lance.allCases.map { MusOption(value: $0, label: $0.displayName) },
+                            selection: lanceBinding(),
+                            axis: .vertical
+                        )
+                    }
+                }
+                .frame(width: 150)
+
+                teamPanel(game, .second)
+            }
+        }
+        .padding(.horizontal, Metrics.spacingM)
+        .padding(.vertical, Metrics.spacingS)
+        .overlay(alignment: .bottom) {
+            if let message = model.errorMessage {
+                ErrorBanner(message: message).padding(Metrics.spacingM)
+            }
+        }
+    }
+
+    private func portraitContent(_ game: Game) -> some View {
         VStack(spacing: Metrics.spacingM) {
             header(game)
 
@@ -78,43 +179,19 @@ struct GameView: View {
 
             HStack(spacing: Metrics.spacingM) {
                 ForEach(TeamID.allCases, id: \.self) { team in
-                    TeamPanel(
-                        team: team,
-                        name: game.teamNames[team],
-                        score: game.state.score[team],
-                        goal: game.rules.goal,
-                        vacas: game.state.vacas[team],
-                        vacasToWin: game.rules.vacasToWin,
-                        isLeading: game.state.score[team] > game.state.score[team.other] && game.isInProgress,
-                        isWinner: game.state.winner == team,
-                        lance: model.selectedLance,
-                        enabled: game.isInProgress
-                    ) { amount in
-                        model.score(amount, to: team)
-                    } onMore: {
-                        model.sheet = .amount(team)
-                    }
-                    .accessibilityElement(children: .contain)
-                    .accessibilityLabel("\(game.teamNames[team]), \(game.state.score[team]) tantos")
+                    teamPanel(game, team)
                 }
             }
 
             MusSegmented(
                 options: Lance.allCases.map { MusOption(value: $0, label: $0.displayName) },
-                selection: Binding(get: { model.selectedLance }, set: { model.selectedLance = $0 })
+                selection: lanceBinding()
             )
             .disabled(!game.isInProgress)
 
             HStack(spacing: Metrics.spacingM) {
-                Button { model.undo() } label: {
-                    Label("Deshacer", systemImage: "arrow.uturn.backward")
-                }
-                .buttonStyle(.musSecondary)
-                .disabled(!game.canUndo)
-
-                Button("¡Órdago!") { model.sheet = .ordago }
-                    .buttonStyle(.musDanger)
-                    .disabled(!game.isInProgress)
+                undoButton(game)
+                ordagoButton(game)
             }
         }
         .padding(Metrics.spacingL)

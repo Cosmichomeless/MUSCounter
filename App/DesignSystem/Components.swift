@@ -124,7 +124,12 @@ struct TeamMarker: View {
 /// Número de tanteo grande, con cifras de ancho fijo que escalan con el tamaño de texto.
 struct ScoreText: View {
     let value: Int
-    @ScaledMetric(relativeTo: .largeTitle) private var size: CGFloat = 120
+    @ScaledMetric private var size: CGFloat
+
+    init(value: Int, baseSize: CGFloat = 120) {
+        self.value = value
+        _size = ScaledMetric(wrappedValue: baseSize, relativeTo: .largeTitle)
+    }
 
     var body: some View {
         Text("\(value)")
@@ -148,9 +153,10 @@ struct MusOption<Value: Hashable>: Identifiable {
 struct MusSegmented<Value: Hashable>: View {
     let options: [MusOption<Value>]
     @Binding var selection: Value
+    var axis: Axis = .horizontal
 
     var body: some View {
-        HStack(spacing: Metrics.spacingXS) {
+        stack {
             ForEach(options) { option in
                 let selected = option.value == selection
                 Button {
@@ -161,7 +167,7 @@ struct MusSegmented<Value: Hashable>: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.7)
                         .foregroundStyle(selected ? Theme.onAccent : Theme.text)
-                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .frame(maxWidth: .infinity, minHeight: 48, maxHeight: axis == .vertical ? .infinity : nil)
                         .background(
                             selected ? Theme.accent : Color.clear,
                             in: RoundedRectangle(cornerRadius: Metrics.cornerRadius - 6, style: .continuous)
@@ -174,6 +180,14 @@ struct MusSegmented<Value: Hashable>: View {
         }
         .padding(Metrics.spacingXS)
         .background(Theme.card, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+    }
+
+    @ViewBuilder private func stack<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        if axis == .vertical {
+            VStack(spacing: Metrics.spacingXS, content: content)
+        } else {
+            HStack(spacing: Metrics.spacingXS, content: content)
+        }
     }
 }
 

@@ -13,6 +13,8 @@ struct TeamPanel: View {
     let isWinner: Bool
     let lance: Lance
     let enabled: Bool
+    /// Versión para pantalla apaisada: cifra más pequeña para que todo quepa en poca altura.
+    var compact = false
     let onScore: (Int) -> Void
     let onMore: () -> Void
 
@@ -28,7 +30,7 @@ struct TeamPanel: View {
                     .minimumScaleFactor(0.7)
             }
 
-            ScoreText(value: score)
+            ScoreText(value: score, baseSize: compact ? 64 : 120)
                 .frame(maxHeight: .infinity)
 
             ProgressMeter(value: score, goal: goal, team: team)
