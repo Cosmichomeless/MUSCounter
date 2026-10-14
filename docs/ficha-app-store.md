@@ -1,0 +1,102 @@
+# Ficha de App Store
+
+Estado: **borrador de textos listo para pegar en App Store Connect; capturas pendientes.** Cubre #21. Nada de esto se ha subido a App Store Connect: hacerlo es una acción del titular (o, con su confirmación expresa, de una herramienta).
+
+Los textos están en español (idioma principal). Entre paréntesis, la longitud actual y el límite de Apple.
+
+## 1. Textos
+
+| Campo | Texto | Límite |
+|---|---|---|
+| Nombre | `Tanteo Mus` (10) | 30 |
+| Subtítulo | `Marcador de mus para la mesa` (28) | 30 |
+| Texto promocional | `Apunta Grande, Chica, Pares, Juego y Punto en dos toques. Tanteo grande, deshacer ilimitado y sin cuenta. Tu partida de mus, siempre clara sobre la mesa.` (153) | 170 |
+| Palabras clave | `marcador,contador,puntos,cartas,baraja,vacas,órdago,envite,grande,chica,pares,juego,peña,piedras` (96) | 100 |
+| Categoría principal | Utilidades | — |
+| Categoría secundaria | Juegos › Cartas | — |
+| URL de soporte | <https://cosmichomeless.github.io/MUSCounter/support/> | — |
+| URL de privacidad | <https://cosmichomeless.github.io/MUSCounter/privacy/> | — |
+| URL de marketing (opcional) | <https://cosmichomeless.github.io/MUSCounter/> | — |
+| Copyright | `2026 <titular>` (lo rellena el titular; no se inventa aquí) | — |
+
+Notas de ASO:
+
+- Apple ya indexa el nombre y el subtítulo, así que «tanteo», «mus» y «marcador» no hace falta repetirlos en las palabras clave (se mantiene «marcador» porque el límite lo permite; quítalo si se necesita sitio).
+- No se usan marcas ni nombres de otras apps (MusMarca) en ningún campo.
+- «Sin anuncios» **no** puede aparecer en la ficha: la app es gratuita y muestra banners (ver [anuncios](anuncios.md)). El diferencial que se comunica es «sin cuenta» y «sin conexión», y que el marcador nunca lleva anuncios encima.
+
+## 2. Descripción
+
+```
+Tanteo Mus es el marcador para tus partidas de mus. Ábrela, empieza y apunta: sin cuenta, sin registro y sin conexión.
+
+TANTEO GRANDE Y CLARO
+Los tantos de cada equipo se ven de un vistazo desde el otro lado de la mesa. Los equipos se distinguen por color y por forma, y hay tema claro, oscuro o el del sistema.
+
+ANOTA POR LANCES
+Grande, Chica, Pares, Juego y Punto, con la cantidad que toque. Órdago incluido, y un ajuste de ±1 para corregir un tanto suelto.
+
+UN DESHACER QUE NO FALLA
+Te has equivocado de equipo o de cantidad: toca Deshacer tantas veces como necesites. Verás además las últimas jugadas.
+
+A 30 O A 40, CON O SIN VACAS
+Elige a cuántos tantos se juega y cuántas partidas hay que ganar. Cada equipo tiene el nombre que quieras.
+
+TU PARTIDA, A SALVO
+Si cierras la app a mitad de partida, la recuperas tal cual al volver. Las partidas terminadas quedan en el historial. Revancha en un toque.
+
+PENSADA PARA LA MESA
+- Botones grandes y fáciles de pulsar.
+- Marcador en vertical y en horizontal.
+- Compatible con VoiceOver y con texto grande.
+- Háptica y sonido opcionales al apuntar.
+
+PRIVACIDAD
+No necesitas cuenta y tus partidas se guardan solo en tu iPhone. La app es gratuita y muestra anuncios de Google AdMob en las pantallas de inicio, historial y victoria, nunca durante el marcador. En la Unión Europea, el Reino Unido y Suiza te pedimos tu consentimiento antes de mostrar anuncios, y puedes cambiarlo en Ajustes.
+
+¿Dudas o sugerencias? Abre una incidencia en la página de soporte.
+```
+
+Antes de publicar, contrastar cada afirmación con la versión enviada (p. ej. «Marcador en horizontal», háptica y sonido, «últimas jugadas»); si algo no está en la build, se quita.
+
+## 3. Notas de la versión (1.0)
+
+```
+Primera versión de Tanteo Mus: marcador de mus con anotación por lances, deshacer, partida recuperable, historial y tema claro/oscuro.
+```
+
+## 4. Clasificación por edad y cuestionarios
+
+- Contenido sin violencia, apuestas con dinero, contenido sexual ni acceso web libre: la clasificación esperada es **4+**. «Contiene anuncios»: **sí**.
+- «Juegos de azar simulados»: **no** (la app solo cuenta tantos; no hay dinero ni apuestas).
+- Cifrado: la app solo usa HTTPS estándar del sistema y del SDK → exención estándar (se confirma en el cuestionario de exportación).
+- Ficha de privacidad: respuestas en [soporte y privacidad](soporte-y-privacidad.md) §4.
+
+## 5. Capturas
+
+Tamaño obligatorio hoy para iPhone: **6,9″ (1320 × 2868)** y, si Apple lo pide, 6,5″. La app es solo iPhone.
+
+Orden propuesto (contar el flujo de una partida real):
+
+| # | Pantalla | Mensaje en la captura |
+|---|---|---|
+| 1 | Marcador a mitad de partida | «Tanteo grande, visible desde toda la mesa» |
+| 2 | Anotar un lance (cantidad) | «Anota Grande, Chica, Pares, Juego y Punto» |
+| 3 | Deshacer y últimas jugadas | «Un deshacer que no falla» |
+| 4 | Nueva partida (30/40, vacas, nombres) | «A 30 o a 40, con o sin vacas» |
+| 5 | Victoria | «Revancha en un toque» |
+| 6 | Marcador en tema claro | «Claro u oscuro» |
+
+Reglas: capturas de la **versión enviada**, sin banner de prueba («Test Ad») visible, sin datos personales, con nombres de equipo neutros («Nosotros» / «Ellos»). Los titulares sobre la captura van en español.
+
+## 6. Icono
+
+El icono (`App/Assets.xcassets/AppIcon.appiconset`) se genera con `scripts/make-icon.py`: cuatro piedras de tanteo (dos por equipo, en los colores de los equipos) cruzadas por una barra dorada sobre el fieltro verde. Se comprueba la legibilidad a 60 y 29 pt antes de enviar.
+
+## 7. Lista de comprobación (#21)
+
+- [x] Nombre, subtítulo, descripción, palabras clave y categoría redactados (esta página).
+- [x] Enlaces de soporte y privacidad públicos y respondiendo (200); se muestran también dentro de la app.
+- [x] Icono con identidad propia (claro, oscuro y tintado).
+- [ ] Capturas de la versión enviada (§5).
+- [ ] **[a cargo del titular]** Copyright, disponibilidad del nombre «Tanteo Mus» y alta de la ficha en App Store Connect.
