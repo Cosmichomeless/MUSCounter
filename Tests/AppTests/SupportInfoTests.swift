@@ -10,22 +10,16 @@ final class SupportInfoTests: XCTestCase {
         XCTAssertNil(SupportInfo.url(from: nil))
     }
 
-    func testEmailValidation() {
-        XCTAssertEqual(SupportInfo.email(from: " soporte@ejemplo.es "), "soporte@ejemplo.es")
-        XCTAssertNil(SupportInfo.email(from: "soporte"))
-        XCTAssertNil(SupportInfo.email(from: ""))
-    }
-
     func testMissingConfigurationHidesLinks() {
         let info = SupportInfo(bundle: Bundle(for: SupportInfoTests.self))
         XCTAssertNil(info.policyURL)
-        XCTAssertNil(info.supportMailURL)
+        XCTAssertNil(info.supportURL)
     }
 
-    func testMailURLIncludesSubject() throws {
-        let info = SupportInfo(policyURL: nil, supportEmail: "soporte@ejemplo.es")
-        let url = try XCTUnwrap(info.supportMailURL)
-        XCTAssertTrue(url.absoluteString.hasPrefix("mailto:soporte@ejemplo.es"))
-        XCTAssertTrue(url.absoluteString.contains("subject="))
+    func testAppBundleCarriesPublicPrivacyAndSupportPages() throws {
+        let info = SupportInfo(bundle: .main)
+        XCTAssertEqual(info.policyURL?.host(), "cosmichomeless.github.io")
+        XCTAssertEqual(info.policyURL?.path(), "/MUSCounter/privacy/")
+        XCTAssertEqual(info.supportURL?.path(), "/MUSCounter/support/")
     }
 }

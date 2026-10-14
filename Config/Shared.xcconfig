@@ -14,6 +14,6 @@ DEVELOPMENT_TEAM =
 ADMOB_APP_ID = ca-app-pub-3940256099942544~1458002511
 ADMOB_BANNER_UNIT_ID = ca-app-pub-3940256099942544/2435281174
 
-// Privacidad y soporte: vacíos por defecto (la app oculta los enlaces). Los reales van en Secrets.xcconfig.
-PRIVACY_POLICY_URL =
-SUPPORT_EMAIL =
+// Privacidad y soporte (páginas públicas en GitHub Pages; en xcconfig «//» es un comentario, de ahí el «$()»).
+PRIVACY_POLICY_URL = https:/$()/cosmichomeless.github.io/MUSCounter/privacy/
+SUPPORT_URL = https:/$()/cosmichomeless.github.io/MUSCounter/support/

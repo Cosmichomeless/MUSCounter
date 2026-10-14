@@ -38,7 +38,7 @@ Cada incidencia lleva: dispositivo y versión de iOS, versión/build, pasos, res
 
 ## 4. Canal de feedback
 
-- Formulario de TestFlight (captura + comentario) y el correo de soporte ([soporte y privacidad](soporte-y-privacidad.md)).
+- Formulario de TestFlight (captura + comentario) y las incidencias de GitHub ([soporte y privacidad](soporte-y-privacidad.md)).
 - El equipo vuelca las incidencias en issues de GitHub (etiqueta `beta`), sin datos personales del tester.
 - Revisión de incidencias al cierre de cada ronda; objetivo: dos rondas de una semana con 8 o más jugadores ([validación con jugadores](validacion-jugadores.md) §2).
 
@@ -54,7 +54,7 @@ Cada incidencia lleva: dispositivo y versión de iOS, versión/build, pasos, res
 >
 > **Anuncios:** la app es gratuita y muestra banners fuera del marcador. No pulses los anuncios.
 >
-> **Cómo enviar feedback:** captura de pantalla desde TestFlight o escribe a `[correo de soporte]`. Cuéntanos sobre todo si el tanteo no sale como esperabas, si algo no se entiende o si pierdes una partida.
+> **Cómo enviar feedback:** captura de pantalla desde TestFlight o abre una incidencia en GitHub. Cuéntanos sobre todo si el tanteo no sale como esperabas, si algo no se entiende o si pierdes una partida.
 
 ## 6. Criterios de salida (de #20)
 

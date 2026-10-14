@@ -18,14 +18,14 @@ struct PrivacyView: View {
                                 "La app muestra banners de Google AdMob en Inicio, Historial y al terminar la partida; nunca durante el marcador. Google puede tratar datos del dispositivo para servirlos. Puedes revisar tu consentimiento en Ajustes cuando la ley lo exige.")
                     }
                     section("Tus derechos",
-                            "Puedes pedir información o ejercer tus derechos de privacidad escribiendo a soporte. Borrar la app borra tus partidas.")
+                            "Puedes pedir información o ejercer tus derechos de privacidad desde la página de soporte. Borrar la app borra tus partidas.")
 
                     if let url = info.policyURL {
                         Link("Política de privacidad completa", destination: url)
                             .buttonStyle(.musSecondary)
                     }
-                    if let mail = info.supportMailURL {
-                        Link("Contactar con soporte", destination: mail)
+                    if let support = info.supportURL {
+                        Link("Soporte", destination: support)
                             .buttonStyle(.musSecondary)
                     }
                 }

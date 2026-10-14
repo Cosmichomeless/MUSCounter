@@ -1,8 +1,8 @@
 # Política de privacidad (borrador)
 
-> **Borrador sujeto a revisión legal.** Describe el comportamiento real de la app a fecha de esta versión. Antes de publicarlo hay que rellenar los datos marcados con `[…]` y alojarlo en una URL pública (se configura en `PRIVACY_POLICY_URL`, ver [soporte y privacidad](soporte-y-privacidad.md)). La app incluye un resumen offline en Ajustes → «Privacidad y soporte».
+> **Borrador sujeto a revisión legal.** La versión pública (EN/ES) está en <https://cosmichomeless.github.io/MUSCounter/privacy/> (rama `gh-pages`); mantén ambas iguales. Contacto: incidencias de GitHub, sin correo ni titular con nombre, como en STRIDE y MURMUR. La app incluye un resumen offline en Ajustes → «Privacidad y soporte».
 
-**Tanteo Mus** · Responsable: `[nombre o razón social del titular]` · Contacto: `[correo de soporte]` · Última actualización: `[fecha]`
+**Tanteo Mus** · Última actualización: 14 de octubre de 2026
 
 ## 1. Qué datos usa la app
 
@@ -14,7 +14,7 @@
 - **No hay cuenta ni registro.** No pedimos nombre, correo ni teléfono para usar la app.
 - **No tenemos servidor propio** ni recibimos tus partidas.
 - **No usamos analítica propia** ni herramientas de seguimiento propias.
-- Si escribes a soporte, usaremos tu correo y el contenido del mensaje solo para responderte.
+- Si abres una incidencia en GitHub, será pública: no incluyas datos personales.
 
 ## 2. Anuncios y terceros
 

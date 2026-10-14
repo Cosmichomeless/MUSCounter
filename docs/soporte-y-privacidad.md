@@ -7,21 +7,21 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 | Clave (`Config/*.xcconfig`) | Info.plist | Uso |
 |---|---|---|
 | `PRIVACY_POLICY_URL` | `MusPrivacyPolicyURL` | Botón «Política de privacidad completa» |
-| `SUPPORT_EMAIL` | `MusSupportEmail` | Botón «Contactar con soporte» (`mailto:`) |
+| `SUPPORT_URL` | `MusSupportURL` | Botón «Soporte» |
 
-- Vacías por defecto (Debug/CI): la app **oculta** los botones en vez de enseñar un enlace roto (`SupportInfo`, con pruebas).
-- `scripts/archive.sh` **no archiva** sin ambas en `Config/Secrets.xcconfig`. En xcconfig `//` es un comentario: escribe la URL como `https:/$()/dominio/privacidad`.
+- Valores en `Config/Shared.xcconfig` (no son secretos): las páginas públicas `https://cosmichomeless.github.io/MUSCounter/privacy/` y `/support/`. En xcconfig `//` es un comentario: se escribe `https:/$()/dominio/ruta`.
+- Si una URL falta o no es válida, la app **oculta** el botón en vez de enseñar un enlace roto (`SupportInfo`, con pruebas).
+- Las páginas se publican con GitHub Pages desde la rama `gh-pages` (`privacy.md`, `support.md`, bilingüe EN/ES, igual que en STRIDE y MURMUR). Al cambiar la política hay que actualizar esa rama **y** [el borrador del repositorio](privacidad.md).
 - El resumen de privacidad va empaquetado en la app y funciona sin conexión. La URL de la ficha de App Store debe apuntar a la política pública ([borrador](privacidad.md)). **[a cargo del titular]** alojarla y fijar el contacto.
 
 ## 2. Canal de soporte
 
-- Correo único `SUPPORT_EMAIL`, accesible desde Ajustes y desde la ficha (URL de soporte).
+- Incidencias en GitHub (`https://github.com/Cosmichomeless/MUSCounter/issues`), enlazadas desde la página de soporte, que es la URL de soporte de la ficha. Se pide no incluir datos personales.
 - Respuesta objetivo: 5 días laborables.
-- Registro mínimo de incidencias en issues de GitHub sin datos personales; el correo no se copia a los issues.
 
 ## 3. Procedimiento de solicitudes de privacidad
 
-1. Recepción por el correo de soporte (asunto «Privacidad»).
+1. Recepción por una incidencia en GitHub (se pide no incluir datos personales).
 2. Verificar que quien escribe es el remitente de la solicitud; no se pide documentación adicional salvo duda razonable.
 3. Responder en **un mes** (RGPD art. 12), prorrogable justificadamente.
 4. Contenido de la respuesta: no existen datos personales en servidores propios; las partidas residen en el dispositivo (se borran al desinstalar). Para datos de publicidad, indicar a Google (<https://myaccount.google.com/data-and-privacy>).
@@ -49,7 +49,7 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 ## 5. Antes del lanzamiento
 
 - [ ] **[a cargo del titular]** Cuenta e IDs reales de AdMob; mensaje de consentimiento UMP publicado en AdMob (EEE/Reino Unido/Suiza).
-- [ ] **[a cargo del titular]** Política pública alojada, `PRIVACY_POLICY_URL` y `SUPPORT_EMAIL` en `Secrets.xcconfig`.
+- [x] Política y soporte públicos en GitHub Pages (`PRIVACY_POLICY_URL` y `SUPPORT_URL` ya configurados).
 - [ ] **[a cargo del titular]** Revisión legal del [borrador](privacidad.md) y cumplimentar la ficha de privacidad según §4.
 - [ ] Probar en un dispositivo con región EEE: aparece el formulario UMP y «Revisar consentimiento» funciona.
 - [ ] Revisar `PrivacyInfo.xcprivacy` y la ficha al actualizar GoogleMobileAds.
