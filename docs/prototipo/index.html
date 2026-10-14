@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prototipo – marcador de mus</title>
+<style>
+:root{
+  --felt:#12301f; --felt-2:#194029; --felt-3:#21523a; --cream:#f6f0dc; --muted:#a9bfae;
+  --gold:#e8c56a; --a:#e0735b; --b:#5aa0e6; --danger:#ff8a80; --ok:#7bd88f;
+  --radius:18px; --tap:56px;
+}
+:root[data-theme="light"]{
+  --felt:#f3efe2; --felt-2:#e6e0cc; --felt-3:#d6cfb6; --cream:#16241b; --muted:#566b5d;
+  --gold:#9a6b00; --a:#b93f27; --b:#1d5fb0; --danger:#b3261e; --ok:#1e7a34;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:#0b1a12;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;color:var(--cream)}
+body{display:flex;align-items:center;justify-content:center}
+#phone{width:min(100vw,430px);height:min(100vh,880px);background:var(--felt);position:relative;overflow:hidden;display:flex;flex-direction:column;
+  padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+@media(min-width:500px){#phone{border-radius:36px;box-shadow:0 20px 60px #0008;border:8px solid #000}}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.screen{display:none;flex:1;min-height:0;flex-direction:column}
+.screen.on{display:flex}
+h1{font-size:34px;margin:0}
+.pad{padding:16px}
+.btn{min-height:var(--tap);border-radius:var(--radius);background:var(--felt-3);padding:0 18px;font-weight:700;font-size:17px}
+.btn.primary{background:var(--gold);color:#1a1a0f}
+.btn.danger{background:transparent;color:var(--danger);border:2px solid var(--danger)}
+.btn:active{transform:scale(.97)}
+.btn.block{width:100%}
+.row{display:flex;gap:10px}
+.grow{flex:1}
+.muted{color:var(--muted)}
+
+/* Inicio */
+#home .hero{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;text-align:center}
+#home .logo{width:96px;height:96px;border-radius:24px;background:var(--felt-2);border:3px solid var(--gold);display:grid;place-items:center;font-size:44px;color:var(--gold)}
+.card{background:var(--felt-2);border-radius:var(--radius);padding:14px 16px}
+.chip{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--felt-3);font-size:13px}
+
+/* Configuración */
+.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.field label{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+input[type=text]{height:var(--tap);border-radius:14px;border:2px solid var(--felt-3);background:var(--felt-2);color:var(--cream);padding:0 14px;font-size:18px}
+input[type=text]:focus{border-color:var(--gold);outline:none}
+.seg{display:flex;background:var(--felt-2);border-radius:14px;padding:4px;gap:4px}
+.seg button{flex:1;min-height:48px;border-radius:11px;font-weight:700}
+.seg button[aria-pressed=true]{background:var(--gold);color:#1a1a0f}
+.hint{font-size:13px;color:var(--muted)}
+
+/* Marcador */
+#game header{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;gap:8px}
+.icon{width:48px;height:48px;border-radius:14px;background:var(--felt-2);font-size:22px}
+.vacas{font-size:14px;color:var(--muted);text-align:center}
+.teams{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 12px}
+.team{background:var(--felt-2);border-radius:22px;display:flex;flex-direction:column;padding:10px 10px 12px;border-top:8px solid var(--tc);min-height:0}
+.team.a{--tc:var(--a)} .team.b{--tc:var(--b)}
+.team.lead{box-shadow:0 0 0 3px var(--gold) inset}
+.tname{display:flex;align-items:center;gap:6px;font-weight:800;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shape{width:18px;height:18px;flex:none;background:var(--tc)}
+.a .shape{border-radius:50%} .b .shape{clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.score{flex:1;display:grid;place-items:center;font-size:clamp(96px,32vw,150px);font-weight:900;line-height:1;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+.meter{height:12px;border-radius:9px;background:var(--felt);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--tc);transition:width .2s}
+.meta{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:6px 2px 8px}
+.pips{letter-spacing:4px;color:var(--gold)}
+.amounts{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.amounts button{min-height:52px;border-radius:14px;background:var(--felt-3);font-size:22px;font-weight:800}
+.amounts button:active{background:var(--tc);color:#fff}
+.amounts button.more{font-size:15px}
+.lances{padding:10px 12px 4px}
+.lances .seg{overflow-x:auto}
+.lances .seg button{min-width:62px;font-size:14px;padding:0 6px}
+.bottombar{display:flex;gap:10px;padding:8px 12px 14px}
+.bottombar .btn{flex:1}
+.toast{position:absolute;left:12px;right:12px;top:8px;min-height:48px;z-index:5;background:var(--cream);color:var(--felt);border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700;opacity:0;pointer-events:none;transition:opacity .2s}
+:root[data-theme="light"] .toast{background:#16241b;color:#f6f0dc}
+.toast.on{opacity:1;pointer-events:auto}
+.toast.err{background:var(--danger);color:#1a0000}
+
+/* Hojas modales */
+.scrim{position:absolute;inset:0;background:#000a;display:none;align-items:flex-end}
+.scrim.on{display:flex}
+.sheet{width:100%;background:var(--felt);border-radius:26px 26px 0 0;padding:18px 16px 24px;max-height:90%;overflow:auto;border-top:3px solid var(--gold)}
+.sheet h2{margin:0 0 6px;font-size:22px}
+.stepper{display:flex;align-items:center;justify-content:center;gap:20px;margin:14px 0}
+.stepper button{width:72px;height:72px;border-radius:50%;background:var(--felt-3);font-size:34px;font-weight:800}
+.stepper output{font-size:60px;font-weight:900;min-width:90px;text-align:center;font-variant-numeric:tabular-nums}
+.sumline{background:var(--felt-2);border-radius:14px;padding:12px 14px;margin:10px 0;font-size:17px;line-height:1.4}
+.log{list-style:none;padding:0;margin:8px 0;display:flex;flex-direction:column;gap:6px}
+.log li{display:flex;justify-content:space-between;background:var(--felt-2);border-radius:12px;padding:10px 12px;font-size:15px}
+.log li:first-child{outline:2px solid var(--gold)}
+
+/* Victoria */
+#win .hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px}
+#win .trophy{font-size:80px}
+#win .final{font-size:54px;font-weight:900;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div id="phone">
+
+  <!-- INICIO -->
+  <section id="home" class="screen on" aria-label="Inicio">
+    <div class="hero pad">
+      <div class="logo" aria-hidden="true">♣</div>
+      <h1>Marcador de mus</h1>
+      <p class="muted">Sin cuenta, sin anuncios, sin conexión.</p>
+    </div>
+    <div class="pad" style="display:flex;flex-direction:column;gap:10px">
+      <div class="card" id="resumeCard" hidden>
+        <div class="row" style="align-items:center">
+          <div class="grow"><strong>Partida en curso</strong><div class="muted" id="resumeInfo"></div></div>
+          <button class="btn primary" id="resumeBtn">Continuar</button>
+        </div>
+      </div>
+      <button class="btn primary block" id="quickStart">Nueva partida</button>
+      <button class="btn block" id="openSetup">Opciones de la partida</button>
+      <button class="btn block" id="openHistory">Historial</button>
+    </div>
+  </section>
+
+  <!-- CONFIGURACIÓN -->
+  <section id="setup" class="screen" aria-label="Configuración de la partida">
+    <div class="pad" style="overflow:auto">
+      <div class="row" style="align-items:center;justify-content:space-between"><h1 style="font-size:28px">Nueva partida</h1><button class="icon" id="cancelSetup" aria-label="Cancelar">✕</button></div>
+      <div class="field"><label for="nameA">Equipo 1</label><input type="text" id="nameA" value="Nosotros" maxlength="14"></div>
+      <div class="field"><label for="nameB">Equipo 2</label><input type="text" id="nameB" value="Ellos" maxlength="14"></div>
+      <div class="field"><label>Tantos de la vaca</label>
+        <div class="seg" id="segGoal"><button aria-pressed="false" data-v="30">30</button><button aria-pressed="true" data-v="40">40</button></div></div>
+      <div class="field"><label>Vacas para ganar</label>
+        <div class="seg" id="segVacas"><button aria-pressed="true" data-v="1">Sin vacas</button><button aria-pressed="false" data-v="2">2 de 3</button><button aria-pressed="false" data-v="3">3 de 5</button></div>
+        <div class="hint">«Sin vacas»: una sola vaca decide la partida.</div></div>
+    </div>
+    <div class="pad" style="margin-top:auto"><button class="btn primary block" id="startGame">Empezar partida</button></div>
+  </section>
+
+  <!-- MARCADOR -->
+  <section id="game" class="screen" aria-label="Marcador">
+    <header>
+      <button class="icon" id="menuBtn" aria-label="Menú">☰</button>
+      <div class="vacas" id="vacasInfo"></div>
+      <button class="icon" id="logBtn" aria-label="Acciones recientes">⏱</button>
+    </header>
+    <div class="teams">
+      <div class="team a" id="teamA"></div>
+      <div class="team b" id="teamB"></div>
+    </div>
+    <div class="lances"><div class="seg" id="lanceSeg" role="group" aria-label="Lance"></div></div>
+    <div class="bottombar">
+      <button class="btn" id="undoBtn">↶ Deshacer</button>
+      <button class="btn danger" id="ordagoBtn">¡Órdago!</button>
+    </div>
+    <div class="toast" id="toast"><span id="toastMsg"></span><button id="toastUndo" class="chip" style="min-height:36px;font-weight:800">Deshacer</button></div>
+  </section>
+
+  <!-- VICTORIA -->
+  <section id="win" class="screen" aria-label="Fin de partida">
+    <div class="hero">
+      <div class="trophy" aria-hidden="true">🏆</div>
+      <h1 id="winTitle"></h1>
+      <div class="muted" id="winWhy"></div>
+      <div class="final" id="winScore"></div>
+    </div>
+    <div class="pad" style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn primary block" id="rematch">Revancha</button>
+      <button class="btn block" id="newGame">Nueva partida</button>
+      <button class="btn block" id="toHome">Volver al inicio</button>
+      <button class="btn block" id="undoWin">↶ Deshacer la última anotación</button>
+    </div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section id="history" class="screen" aria-label="Historial">
+    <div class="pad" style="overflow:auto">
+      <div class="row" style="align-items:center;justify-content:space-between"><h1 style="font-size:28px">Historial</h1><button class="icon" id="closeHistory" aria-label="Cerrar">✕</button></div>
+      <ul class="log" id="histList"></ul>
+    </div>
+  </section>
+
+  <!-- HOJAS -->
+  <div class="scrim" id="sheetAmount"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="amtTitle">
+    <h2 id="amtTitle">Otra cantidad</h2>
+    <div class="stepper"><button id="amtMinus" aria-label="Menos">−</button><output id="amtVal">6</output><button id="amtPlus" aria-label="Más">+</button></div>
+    <div class="sumline" id="amtSummary"></div>
+    <div class="row"><button class="btn grow" id="amtCancel">Cancelar</button><button class="btn primary grow" id="amtOk">Apuntar</button></div>
+  </div></div>
+
+  <div class="scrim" id="sheetOrdago"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ordTitle">
+    <h2 id="ordTitle">¡Órdago!</h2>
+    <p class="muted" style="margin:0">¿Quién gana el órdago? La vaca será para ese equipo.</p>
+    <div class="row" style="margin:12px 0"><button class="btn grow" id="ordA"></button><button class="btn grow" id="ordB"></button></div>
+    <div class="sumline" id="ordSummary">Elige un equipo para ver el resumen.</div>
+    <div class="row"><button class="btn grow" id="ordCancel">Cancelar</button><button class="btn primary grow" id="ordOk" disabled>Confirmar órdago</button></div>
+  </div></div>
+
+  <div class="scrim" id="sheetLog"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="logTitle">
+    <h2 id="logTitle">Acciones recientes</h2>
+    <ul class="log" id="logList"></ul>
+    <button class="btn block" id="logClose">Cerrar</button>
+  </div></div>
+
+  <div class="scrim" id="sheetMenu"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+    <h2 id="menuTitle">Partida</h2>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button class="btn block" id="adjMinus">Ajuste −1 …</button>
+      <button class="btn block" id="themeBtn">Cambiar tema</button>
+      <button class="btn block" id="abandonBtn">Abandonar partida</button>
+      <button class="btn danger block" id="restartBtn">Reiniciar partida</button>
+      <button class="btn block" id="menuClose">Cerrar</button>
+    </div>
+  </div></div>
+
+  <div class="scrim" id="sheetConfirm"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="cfTitle">
+    <h2 id="cfTitle"></h2><p class="muted" id="cfText"></p>
+    <div class="row"><button class="btn grow" id="cfNo">Cancelar</button><button class="btn danger grow" id="cfYes">Confirmar</button></div>
+  </div></div>
+</div>
+
+<script>
+const LANCES=["Grande","Chica","Pares","Juego","Punto"];
+const QUICK={Grande:[1,2,3,4,5],Chica:[1,2,3,4,5],Pares:[1,2,3,4,5],Juego:[2,3,4,5,6],Punto:[1,2,3,4,5]};
+const $=id=>document.getElementById(id);
+let prefs={nameA:"Nosotros",nameB:"Ellos",goal:40,vacas:1,theme:"dark"};
+let G=null, history_=[], lance="Grande", toastTimer;
+
+function newGame(p){return{names:[p.nameA||"Equipo 1",p.nameB||"Equipo 2"],goal:p.goal,need:p.vacas,score:[0,0],vacas:[0,0],log:[],status:"playing",winner:null,why:null}}
+function snapshot(){return JSON.stringify({score:G.score,vacas:G.vacas,status:G.status,winner:G.winner,why:G.why})}
+function apply(team,lanceName,amount,kind){
+  if(G.status!=="playing")return {err:"La partida ya ha terminado."};
+  if(kind==="ordago"){}
+  else if(!(amount>=1))return {err:"La cantidad debe ser al menos 1."};
+  const before=snapshot();
+  let won=false;
+  if(kind==="ordago"){G.score[team]=G.goal;won=true}
+  else if(kind==="adjust"){
+    const v=G.score[team]+amount;
+    if(v<0)return {err:"El tanteo no puede bajar de 0."};
+    G.score[team]=Math.min(v,G.goal); won=G.score[team]>=G.goal;
+  } else {G.score[team]=Math.min(G.score[team]+amount,G.goal); won=G.score[team]>=G.goal}
+  G.log.push({team,lance:lanceName,amount,kind,before});
+  if(won){
+    G.vacas[team]++;
+    if(G.vacas[team]>=G.need){G.status="won";G.winner=team;G.why=kind==="ordago"?"Órdago":"Objetivo alcanzado"}
+    else{G.lastVaca=[...G.score];G.score=[0,0]}
+  }
+  return {ok:true};
+}
+function undo(){
+  const e=G.log.pop(); if(!e)return false;
+  const s=JSON.parse(e.before); Object.assign(G,s); return true;
+}
+
+/* UI */
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id))}
+function sheet(id,on=true){$(id).classList.toggle("on",on)}
+function toast(msg,err=false){const t=$("toast");$("toastMsg").textContent=msg;t.classList.toggle("err",err);$("toastUndo").style.display=err?"none":"";t.classList.add("on");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("on"),3200)}
+function teamHTML(i){
+  const pct=Math.round(G.score[i]/G.goal*100), lead=G.score[i]>G.score[1-i];
+  const pips=G.need>1?`<span class="pips" aria-label="${G.vacas[i]} vacas">${"●".repeat(G.vacas[i])}${"○".repeat(G.need-G.vacas[i])}</span>`:"<span></span>";
+  const q=QUICK[lance].map(v=>`<button data-t="${i}" data-a="${v}" aria-label="Apuntar ${v} de ${lance} a ${G.names[i]}">${v}</button>`).join("");
+  return `<div class="tname"><span class="shape"></span>${esc(G.names[i])}</div>
+   <div class="score" aria-label="${G.score[i]} tantos">${G.score[i]}</div>
+   <div class="meter" aria-hidden="true"><i style="width:${pct}%"></i></div>
+   <div class="meta"><span>${G.score[i]}/${G.goal}</span>${pips}</div>
+   <div class="amounts">${q}<button class="more" data-t="${i}" data-more="1" aria-label="Otra cantidad para ${esc(G.names[i])}">Más</button></div>`;
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function render(){
+  $("teamA").innerHTML=teamHTML(0);$("teamB").innerHTML=teamHTML(1);
+  $("teamA").classList.toggle("lead",G.score[0]>G.score[1]);$("teamB").classList.toggle("lead",G.score[1]>G.score[0]);
+  $("vacasInfo").innerHTML=G.need>1?`Vacas: ${G.vacas[0]} – ${G.vacas[1]}<br>a ${G.goal} tantos`:`Una vaca a ${G.goal} tantos`;
+  $("lanceSeg").innerHTML=LANCES.map(l=>`<button aria-pressed="${l===lance}" data-l="${l}">${l}</button>`).join("");
+  $("undoBtn").disabled=G.log.length===0;
+  localStorage.setItem("proto-game",JSON.stringify(G));
+}
+function afterApply(r,msg){
+  if(r.err){toast(r.err,true);return}
+  render();
+  if(G.status==="won"){showWin();return}
+  toast(msg);
+}
+function showWin(){
+  $("winTitle").textContent=`¡Victoria de ${G.names[G.winner]}!`;
+  $("winWhy").textContent=G.why+(G.need>1?` · Vacas ${G.vacas[0]}–${G.vacas[1]}`:"");
+  $("winScore").textContent=G.need>1?`${G.vacas[0]} – ${G.vacas[1]}`:`${G.score[0]} – ${G.score[1]}`;
+  saveHistory(); show("win");
+}
+function saveHistory(){
+  if(G.saved)return; G.saved=true;
+  history_.unshift({date:new Date().toLocaleDateString("es-ES"),names:G.names,score:[...G.score],vacas:[...G.vacas],winner:G.winner,need:G.need});
+  localStorage.setItem("proto-hist",JSON.stringify(history_));
+}
+function start(p){G=newGame(p);lance="Grande";render();show("game")}
+
+/* Eventos */
+$("teams")?.remove;
+document.querySelector(".teams").addEventListener("click",e=>{
+  const b=e.target.closest("button");if(!b)return;
+  const t=+b.dataset.t;
+  if(b.dataset.more){openAmount(t);return}
+  const a=+b.dataset.a; const r=apply(t,lance,a,"score");
+  afterApply(r,`${lance}: +${a} para ${G.names[t]}`);
+});
+$("lanceSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;lance=b.dataset.l;render()});
+$("undoBtn").onclick=()=>{if(undo()){render();toast("Última acción deshecha")}};
+$("toastUndo").onclick=()=>{if(undo()){render();$("toast").classList.remove("on")}};
+
+let amtTeam=0,amtVal=6;
+function updAmt(){$("amtVal").textContent=amtVal;const after=Math.min(G.score[amtTeam]+amtVal,G.goal);
+  $("amtSummary").innerHTML=`<strong>${lance}</strong> · ${amtVal} tantos para <strong>${esc(G.names[amtTeam])}</strong><br>${G.score[amtTeam]} → ${after}${after>=G.goal?" · <strong>¡gana la vaca!</strong>":""}`}
+function openAmount(t){amtTeam=t;amtVal=6;updAmt();sheet("sheetAmount")}
+$("amtMinus").onclick=()=>{amtVal=Math.max(1,amtVal-1);updAmt()};
+$("amtPlus").onclick=()=>{amtVal=Math.min(G.goal,amtVal+1);updAmt()};
+$("amtCancel").onclick=()=>sheet("sheetAmount",false);
+$("amtOk").onclick=()=>{sheet("sheetAmount",false);afterApply(apply(amtTeam,lance,amtVal,"score"),`${lance}: +${amtVal} para ${G.names[amtTeam]}`)};
+
+let ordTeam=null;
+$("ordagoBtn").onclick=()=>{ordTeam=null;$("ordA").textContent=G.names[0];$("ordB").textContent=G.names[1];$("ordSummary").textContent="Elige un equipo para ver el resumen.";$("ordOk").disabled=true;sheet("sheetOrdago")};
+[["ordA",0],["ordB",1]].forEach(([id,t])=>$(id).onclick=()=>{ordTeam=t;$("ordSummary").innerHTML=`Gana <strong>${esc(G.names[t])}</strong> la vaca: ${G.score[t]} → ${G.goal}.`;$("ordOk").disabled=false});
+$("ordCancel").onclick=()=>sheet("sheetOrdago",false);
+$("ordOk").onclick=()=>{sheet("sheetOrdago",false);afterApply(apply(ordTeam,"Órdago",0,"ordago"),"Órdago apuntado")};
+
+$("logBtn").onclick=()=>{
+  const l=[...G.log].reverse().slice(0,8);
+  $("logList").innerHTML=l.length?l.map(e=>`<li><span>${esc(G.names[e.team])} · ${e.lance}</span><strong>${e.kind==="ordago"?"Órdago":(e.amount>0?"+":"")+e.amount}</strong></li>`).join(""):'<li class="muted">Todavía no hay acciones.</li>';
+  sheet("sheetLog")};
+$("logClose").onclick=()=>sheet("sheetLog",false);
+
+function confirmDialog(title,text,yes){$("cfTitle").textContent=title;$("cfText").textContent=text;sheet("sheetConfirm");$("cfYes").onclick=()=>{sheet("sheetConfirm",false);yes()};}
+$("cfNo").onclick=()=>sheet("sheetConfirm",false);
+$("menuBtn").onclick=()=>sheet("sheetMenu");
+$("menuClose").onclick=()=>sheet("sheetMenu",false);
+$("restartBtn").onclick=()=>{sheet("sheetMenu",false);confirmDialog("¿Reiniciar la partida?","Se borrará el tanteo y las acciones de esta partida. No se puede deshacer.",()=>{start({nameA:G.names[0],nameB:G.names[1],goal:G.goal,vacas:G.need})})};
+$("abandonBtn").onclick=()=>{sheet("sheetMenu",false);confirmDialog("¿Abandonar la partida?","Se guardará en el historial como abandonada.",()=>{G.status="abandoned";saveHistory();localStorage.removeItem("proto-game");G=null;goHome()})};
+$("adjMinus").onclick=()=>{sheet("sheetMenu",false);const t=G.score[0]>=G.score[1]?0:1;const r=apply(t,"Ajuste",-1,"adjust");afterApply(r,`Ajuste −1 para ${G.names[t]}`)};
+$("themeBtn").onclick=()=>{prefs.theme=prefs.theme==="dark"?"light":"dark";document.documentElement.dataset.theme=prefs.theme;sheet("sheetMenu",false)};
+
+$("quickStart").onclick=()=>start(prefs);
+$("openSetup").onclick=()=>{$("nameA").value=prefs.nameA;$("nameB").value=prefs.nameB;show("setup")};
+$("cancelSetup").onclick=goHome;
+function seg(id,key){$(id).addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;[...$(id).children].forEach(c=>c.setAttribute("aria-pressed",c===b));prefs[key]=+b.dataset.v})}
+seg("segGoal","goal");seg("segVacas","vacas");
+$("startGame").onclick=()=>{prefs.nameA=$("nameA").value.trim()||"Equipo 1";prefs.nameB=$("nameB").value.trim()||"Equipo 2";start(prefs)};
+$("openHistory").onclick=()=>{
+  $("histList").innerHTML=history_.length?history_.map(h=>`<li><span>${h.date} · ${esc(h.names[0])} – ${esc(h.names[1])}</span><strong>${h.winner==null?"Abandonada":h.need>1?h.vacas.join("–"):h.score.join("–")}</strong></li>`).join(""):'<li class="muted">Aún no hay partidas.</li>';
+  show("history")};
+$("closeHistory").onclick=goHome;
+$("rematch").onclick=()=>start({nameA:G.names[0],nameB:G.names[1],goal:G.goal,vacas:G.need});
+$("newGame").onclick=()=>{$("nameA").value=prefs.nameA;$("nameB").value=prefs.nameB;show("setup")};
+$("toHome").onclick=()=>{G=null;localStorage.removeItem("proto-game");goHome()};
+$("undoWin").onclick=()=>{if(undo()){history_.shift();G.saved=false;render();show("game")}};
+$("resumeBtn").onclick=()=>{render();show("game")};
+function goHome(){
+  const resume=!!G&&G.status==="playing";
+  $("resumeCard").hidden=!resume;
+  if(resume)$("resumeInfo").textContent=`${G.names[0]} ${G.score[0]} – ${G.score[1]} ${G.names[1]}`;
+  show("home")}
+try{history_=JSON.parse(localStorage.getItem("proto-hist")||"[]");const g=localStorage.getItem("proto-game");if(g)G=JSON.parse(g)}catch(e){}
+if(G&&G.status!=="playing")G=null;
+goHome();
+</script>
+</body>
+</html>
