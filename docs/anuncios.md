@@ -43,7 +43,7 @@ Política: [propuesta de valor](propuesta-de-valor.md) §4. El MVP es gratuito c
 
 ## 6. Privacidad y tienda
 
-- La ficha de privacidad de App Store Connect **ya no puede ser «Datos no recopilados»**: el SDK de AdMob recopila datos de dispositivo y de uso para publicidad. Se concreta en #19.
+- La ficha de privacidad de App Store Connect **ya no puede ser «Datos no recopilados»**: el SDK de AdMob recopila datos de dispositivo y de uso para publicidad. Se concreta en [soporte y privacidad](soporte-y-privacidad.md) §4.
 - Los textos de tienda (#21) deben mencionar los anuncios y no decir «sin anuncios».
 - La política de privacidad (#19) debe citar a Google como tercero y el modo de revisar el consentimiento.
 

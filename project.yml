@@ -38,6 +38,9 @@ targets:
         # Anuncios (AdMob). Los identificadores vienen de los .xcconfig; los reales, de Secrets.xcconfig.
         GADApplicationIdentifier: $(ADMOB_APP_ID)
         MusAdBannerUnitID: $(ADMOB_BANNER_UNIT_ID)
+        # Privacidad y soporte (vacíos = la app no muestra el enlace).
+        MusPrivacyPolicyURL: $(PRIVACY_POLICY_URL)
+        MusSupportEmail: $(SUPPORT_EMAIL)
         SKAdNetworkItems:
           - SKAdNetworkIdentifier: cstr6suwn9.skadnetwork
           - SKAdNetworkIdentifier: 4fzdc2evr5.skadnetwork

@@ -16,6 +16,14 @@ if ! grep -qE '^ADMOB_APP_ID *= *ca-app-pub-[0-9]{16}~[0-9]{10}' Config/Secrets.
   exit 1
 fi
 
+# La política de privacidad y el contacto de soporte son obligatorios para la ficha de App Store.
+for key in PRIVACY_POLICY_URL SUPPORT_EMAIL; do
+  if ! grep -qE "^$key *= *[^ ]+" Config/Secrets.xcconfig 2>/dev/null; then
+    echo "Falta $key en Config/Secrets.xcconfig (ver Secrets.xcconfig.example)." >&2
+    exit 1
+  fi
+done
+
 xcodegen generate
 mkdir -p build
 xcodebuild archive -project MUSCounter.xcodeproj -scheme MUSCounter -configuration Release \
