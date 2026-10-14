@@ -5,6 +5,7 @@ import MusCore
 /// Si el contenido no cabe (letra grande, horizontal) se desplaza en vez de recortarse.
 struct GameView: View {
     let model: AppModel
+    @State private var confirmation: GameConfirmation?
 
     var body: some View {
         if let game = model.game {
@@ -14,10 +15,51 @@ struct GameView: View {
             }
             .foregroundStyle(Theme.text)
             .musScreen()
+            .overlay(alignment: .top) {
+                if let toast = model.toast {
+                    UndoToast(message: toast.message) { model.undo() }
+                        .padding(.horizontal, Metrics.spacingL)
+                        .padding(.top, Metrics.spacingS)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .task(id: toast.id) {
+                            try? await Task.sleep(for: .seconds(4))
+                            if model.toast?.id == toast.id { model.toast = nil }
+                        }
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: model.toast)
+            .confirmationDialog(
+                confirmation?.title ?? "",
+                isPresented: Binding(get: { confirmation != nil }, set: { if !$0 { confirmation = nil } }),
+                titleVisibility: .visible
+            ) {
+                if let confirmation {
+                    Button(confirmation.confirmLabel, role: .destructive) {
+                        switch confirmation {
+                        case .restart: model.restartGame()
+                        case .abandon: model.abandonGame()
+                        case .delete: model.deleteGame()
+                        }
+                    }
+                }
+                Button("Cancelar", role: .cancel) {}
+            } message: {
+                Text(confirmation?.message ?? "")
+            }
             .sheet(item: Binding(get: { model.sheet }, set: { model.sheet = $0 })) { sheet in
                 switch sheet {
                 case let .amount(team): AmountSheet(model: model, game: game, team: team)
                 case .ordago: OrdagoSheet(model: model, game: game)
+                case .log: ActionLogSheet(game: game)
+                case .adjust: AdjustSheet(model: model, game: game)
+                case .menu:
+                    GameMenuSheet(
+                        onAdjust: { model.sheet = .adjust },
+                        onConfirm: { choice in
+                            model.sheet = nil
+                            confirmation = choice
+                        }
+                    )
                 }
             }
         }
@@ -63,11 +105,30 @@ struct GameView: View {
             )
             .disabled(!game.isInProgress)
 
-            Button("¡Órdago!") { model.sheet = .ordago }
-                .buttonStyle(.musDanger)
-                .disabled(!game.isInProgress)
+            HStack(spacing: Metrics.spacingM) {
+                Button { model.undo() } label: {
+                    Label("Deshacer", systemImage: "arrow.uturn.backward")
+                }
+                .buttonStyle(.musSecondary)
+                .disabled(!game.canUndo)
+
+                Button("¡Órdago!") { model.sheet = .ordago }
+                    .buttonStyle(.musDanger)
+                    .disabled(!game.isInProgress)
+            }
         }
         .padding(Metrics.spacingL)
+    }
+
+    private func iconButton(_ symbol: String, _ label: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: symbol)
+                .font(.title3.weight(.semibold))
+                .frame(width: Metrics.minTapTarget, height: Metrics.minTapTarget)
+                .background(Theme.card, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
     }
 
     private func header(_ game: Game) -> some View {
@@ -75,11 +136,15 @@ struct GameView: View {
             Button("Salir") { model.leaveGame() }
                 .buttonStyle(.musSecondary)
                 .fixedSize(horizontal: true, vertical: false)
-            Spacer()
             Text(subtitle(game))
                 .font(.footnote)
                 .foregroundStyle(Theme.mutedText)
-                .multilineTextAlignment(.trailing)
+                .frame(maxWidth: .infinity)
+                .multilineTextAlignment(.center)
+            iconButton("clock.arrow.circlepath", "Acciones recientes") { model.sheet = .log }
+            if game.isInProgress {
+                iconButton("ellipsis", "Menú de la partida") { model.sheet = .menu }
+            }
         }
     }
 

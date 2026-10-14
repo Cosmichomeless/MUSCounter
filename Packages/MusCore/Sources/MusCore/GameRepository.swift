@@ -45,6 +45,16 @@ public final class GameRepository {
         }
     }
 
+    /// Reinicia la partida en curso: mismos equipos y reglas, tanteo a cero. La anterior se descarta
+    /// (no pasa al historial).
+    @discardableResult
+    public func restartActiveGame(now: Date = Date()) throws -> Game {
+        guard let current = data.activeGame else { throw ScoringError.notInProgress }
+        let fresh = try Game(teamNames: current.teamNames, rules: current.rules, createdAt: now)
+        try commit { $0.activeGame = fresh }
+        return fresh
+    }
+
     /// Descarta la partida en curso sin guardarla.
     public func discardActiveGame() throws {
         try commit { $0.activeGame = nil }
