@@ -15,6 +15,8 @@ final class AppModel {
     var screen: Screen = .home
     var game: Game?
     var draft: GameSetupDraft = .standard
+    /// Lance al que se apuntan los tantos con los botones del marcador.
+    var selectedLance: Lance = .grande
     /// Mensaje de error para mostrar al usuario (nil si no hay).
     var errorMessage: String?
 
@@ -69,6 +71,36 @@ final class AppModel {
     }
 
     // MARK: - Partida
+
+    /// Apunta `amount` tantos del lance seleccionado al equipo `team`.
+    func score(_ amount: Int, to team: TeamID) {
+        perform { try $0.addScore(amount, lance: selectedLance, to: team) }
+    }
+
+    /// Aplica un cambio a la partida y lo guarda. Si falla (regla o guardado) el estado no cambia.
+    private func perform(_ change: (inout Game) throws -> Void) {
+        guard var updated = game else { return }
+        do {
+            try change(&updated)
+            try repository.update(updated)
+            game = updated
+            errorMessage = nil
+        } catch let error as ScoringError {
+            errorMessage = Self.message(for: error)
+        } catch {
+            errorMessage = "No se pudo guardar la partida en el dispositivo."
+        }
+    }
+
+    static func message(for error: ScoringError) -> String {
+        switch error {
+        case .notInProgress: return "La partida ya ha terminado."
+        case .invalidAmount: return "La cantidad no es válida."
+        case .belowZero: return "El tanteo no puede bajar de 0."
+        case .nothingToUndo: return "No hay nada que deshacer."
+        case .invalidRules: return "Las opciones de la partida no son válidas."
+        }
+    }
 
     /// Empieza una partida con el borrador. Si había otra en curso se archiva como abandonada.
     func startGame(with draft: GameSetupDraft) {
