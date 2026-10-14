@@ -1,6 +1,6 @@
 # Reglas de tanteo
 
-Especificación del tanteo de la app. Es la fuente de verdad de `MusCore`: cada caso de la sección 7 tiene (o tendrá) una prueba automatizada con el mismo identificador.
+Especificación del tanteo de la app. Es la fuente de verdad de `MusCore`: cada caso de la sección 7 tiene una prueba automatizada `testRNN…` con el mismo identificador (lo comprueba `scripts/check_rules_tests.py` en la CI). `VariantMatrixTests` recorre además las seis combinaciones de objetivo y vacas.
 
 Estado: **borrador pendiente de revisión por jugadores** (ver [validación con jugadores](validacion-jugadores.md)). Los valores por defecto son los de mus «estándar» más extendidos; las diferencias de casa se cubren con las variantes de la sección 3.
 

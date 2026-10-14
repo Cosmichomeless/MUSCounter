@@ -4,6 +4,10 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# Antes de preparar una versión: la especificación y las pruebas deben coincidir y pasar.
+python3 scripts/check_rules_tests.py
+(cd Packages/MusCore && swift test)
+
 xcodegen generate
 mkdir -p build
 xcodebuild archive -project MUSCounter.xcodeproj -scheme MUSCounter -configuration Release \

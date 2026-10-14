@@ -16,6 +16,7 @@ open MUSCounter.xcodeproj      # Run en un simulador de iPhone (iOS 17+)
 Ejecutar todas las pruebas, igual que la CI:
 
 ```bash
+python3 scripts/check_rules_tests.py  # cada caso R-NN de la especificación tiene su prueba
 (cd Packages/MusCore && swift test)   # lógica de reglas y persistencia
 ./scripts/test-app.sh                 # compila Release + pruebas de la app en simulador
 ```
@@ -41,10 +42,10 @@ Ejecutar todas las pruebas, igual que la CI:
 ## Generar una build de prueba (TestFlight)
 
 1. Sube `CURRENT_PROJECT_VERSION` en `Config/Shared.xcconfig` (cada subida necesita un número de build nuevo).
-2. `DEVELOPMENT_TEAM=XXXXXXXXXX ./scripts/archive.sh` → crea `build/MUSCounter.xcarchive`.
+2. `DEVELOPMENT_TEAM=XXXXXXXXXX ./scripts/archive.sh` → antes de archivar comprueba la especificación y ejecuta `swift test`; crea `build/MUSCounter.xcarchive`.
 3. Xcode → Window → Organizer → Archives → *Distribute App* → *App Store Connect* → *Upload*.
 4. En App Store Connect → TestFlight, añade la build al grupo de pruebas internas.
 
 ## CI
 
-`.github/workflows/ci.yml` ejecuta en cada PR: comprobación de enlaces de documentación, `swift test` de `MusCore` y `scripts/test-app.sh` (Release + pruebas en simulador).
+`.github/workflows/ci.yml` ejecuta en cada PR: comprobación de enlaces de documentación, coincidencia entre especificación y pruebas, `swift test` de `MusCore` y `scripts/test-app.sh` (Release + pruebas en simulador).
