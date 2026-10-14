@@ -3,12 +3,12 @@ import UIKit
 import MusCore
 
 extension Color {
-    init(_ rgb: RGBColor) {
+    init(_ rgb: HexColor) {
         self.init(.sRGB, red: rgb.red, green: rgb.green, blue: rgb.blue, opacity: 1)
     }
 
     /// Color que cambia solo entre tema claro y oscuro.
-    init(light: RGBColor, dark: RGBColor) {
+    init(light: HexColor, dark: HexColor) {
         self.init(uiColor: UIColor { traits in
             let c = traits.userInterfaceStyle == .dark ? dark : light
             return UIColor(red: c.red, green: c.green, blue: c.blue, alpha: 1)

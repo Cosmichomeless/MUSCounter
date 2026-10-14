@@ -2,7 +2,7 @@ import Foundation
 
 /// Color en sRGB definido por su valor hexadecimal (0xRRGGBB). Vive en el paquete para poder
 /// comprobar el contraste con pruebas automáticas.
-public struct RGBColor: Equatable, Sendable {
+public struct HexColor: Equatable, Sendable {
     public let hex: UInt32
 
     public init(hex: UInt32) { self.hex = hex }
@@ -18,7 +18,7 @@ public struct RGBColor: Equatable, Sendable {
     }
 
     /// Relación de contraste WCAG entre dos colores (de 1 a 21).
-    public static func contrastRatio(_ a: RGBColor, _ b: RGBColor) -> Double {
+    public static func contrastRatio(_ a: HexColor, _ b: HexColor) -> Double {
         let (hi, lo) = (max(a.relativeLuminance, b.relativeLuminance), min(a.relativeLuminance, b.relativeLuminance))
         return (hi + 0.05) / (lo + 0.05)
     }
@@ -26,44 +26,44 @@ public struct RGBColor: Equatable, Sendable {
 
 /// Paleta semántica de un tema (fieltro de mesa + oro de baraja). Ver docs/prototipo.
 public struct Palette: Equatable, Sendable {
-    public let background: RGBColor
-    public let card: RGBColor
-    public let cardRaised: RGBColor
-    public let text: RGBColor
-    public let mutedText: RGBColor
-    public let accent: RGBColor
-    public let onAccent: RGBColor
-    public let teamFirst: RGBColor
-    public let teamSecond: RGBColor
-    public let danger: RGBColor
+    public let background: HexColor
+    public let card: HexColor
+    public let cardRaised: HexColor
+    public let text: HexColor
+    public let mutedText: HexColor
+    public let accent: HexColor
+    public let onAccent: HexColor
+    public let teamFirst: HexColor
+    public let teamSecond: HexColor
+    public let danger: HexColor
 
     public static let dark = Palette(
-        background: RGBColor(hex: 0x12301F),
-        card: RGBColor(hex: 0x194029),
-        cardRaised: RGBColor(hex: 0x21523A),
-        text: RGBColor(hex: 0xF6F0DC),
-        mutedText: RGBColor(hex: 0xA9BFAE),
-        accent: RGBColor(hex: 0xE8C56A),
-        onAccent: RGBColor(hex: 0x1A1A0F),
-        teamFirst: RGBColor(hex: 0xE0735B),
-        teamSecond: RGBColor(hex: 0x5AA0E6),
-        danger: RGBColor(hex: 0xFF8A80)
+        background: HexColor(hex: 0x12301F),
+        card: HexColor(hex: 0x194029),
+        cardRaised: HexColor(hex: 0x21523A),
+        text: HexColor(hex: 0xF6F0DC),
+        mutedText: HexColor(hex: 0xA9BFAE),
+        accent: HexColor(hex: 0xE8C56A),
+        onAccent: HexColor(hex: 0x1A1A0F),
+        teamFirst: HexColor(hex: 0xE0735B),
+        teamSecond: HexColor(hex: 0x5AA0E6),
+        danger: HexColor(hex: 0xFF8A80)
     )
 
     public static let light = Palette(
-        background: RGBColor(hex: 0xF3EFE2),
-        card: RGBColor(hex: 0xE6E0CC),
-        cardRaised: RGBColor(hex: 0xD6CFB6),
-        text: RGBColor(hex: 0x16241B),
-        mutedText: RGBColor(hex: 0x465B4D),
-        accent: RGBColor(hex: 0x9A6B00),
-        onAccent: RGBColor(hex: 0xFFFFFF),
-        teamFirst: RGBColor(hex: 0xB93F27),
-        teamSecond: RGBColor(hex: 0x1D5FB0),
-        danger: RGBColor(hex: 0xB3261E)
+        background: HexColor(hex: 0xF3EFE2),
+        card: HexColor(hex: 0xE6E0CC),
+        cardRaised: HexColor(hex: 0xD6CFB6),
+        text: HexColor(hex: 0x16241B),
+        mutedText: HexColor(hex: 0x465B4D),
+        accent: HexColor(hex: 0x9A6B00),
+        onAccent: HexColor(hex: 0xFFFFFF),
+        teamFirst: HexColor(hex: 0xB93F27),
+        teamSecond: HexColor(hex: 0x1D5FB0),
+        danger: HexColor(hex: 0xB3261E)
     )
 
-    public func team(_ team: TeamID) -> RGBColor { team == .first ? teamFirst : teamSecond }
+    public func team(_ team: TeamID) -> HexColor { team == .first ? teamFirst : teamSecond }
 }
 
 /// Medidas compartidas de la interfaz, en puntos.

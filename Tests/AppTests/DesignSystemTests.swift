@@ -5,12 +5,12 @@ import MusCore
 @testable import MUSCounter
 
 final class DesignSystemTests: XCTestCase {
-    private func resolve(_ color: Color, _ style: UIUserInterfaceStyle) -> RGBColor {
+    private func resolve(_ color: Color, _ style: UIUserInterfaceStyle) -> HexColor {
         let ui = UIColor(color).resolvedColor(with: UITraitCollection(userInterfaceStyle: style))
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
         ui.getRed(&r, green: &g, blue: &b, alpha: &a)
         let hex = (UInt32((r * 255).rounded()) << 16) | (UInt32((g * 255).rounded()) << 8) | UInt32((b * 255).rounded())
-        return RGBColor(hex: hex)
+        return HexColor(hex: hex)
     }
 
     func testThemeFollowsPaletteInBothStyles() {

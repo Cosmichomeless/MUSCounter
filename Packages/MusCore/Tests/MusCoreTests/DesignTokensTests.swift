@@ -3,13 +3,13 @@ import XCTest
 
 final class DesignTokensTests: XCTestCase {
     func testContrastRatioExtremes() {
-        let black = RGBColor(hex: 0x000000), white = RGBColor(hex: 0xFFFFFF)
-        XCTAssertEqual(RGBColor.contrastRatio(black, white), 21, accuracy: 0.01)
-        XCTAssertEqual(RGBColor.contrastRatio(white, white), 1, accuracy: 0.0001)
+        let black = HexColor(hex: 0x000000), white = HexColor(hex: 0xFFFFFF)
+        XCTAssertEqual(HexColor.contrastRatio(black, white), 21, accuracy: 0.01)
+        XCTAssertEqual(HexColor.contrastRatio(white, white), 1, accuracy: 0.0001)
     }
 
     private func check(_ p: Palette, _ name: String, file: StaticString = #filePath, line: UInt = #line) {
-        let text: [(String, RGBColor, RGBColor)] = [
+        let text: [(String, HexColor, HexColor)] = [
             ("texto/fondo", p.text, p.background),
             ("texto/tarjeta", p.text, p.card),
             ("texto/tarjeta elevada", p.text, p.cardRaised),
@@ -21,16 +21,16 @@ final class DesignTokensTests: XCTestCase {
             ("peligro/tarjeta", p.danger, p.card),
         ]
         for (label, fg, bg) in text {
-            XCTAssertGreaterThanOrEqual(RGBColor.contrastRatio(fg, bg), 4.5, "\(name) \(label) (texto, WCAG AA)", file: file, line: line)
+            XCTAssertGreaterThanOrEqual(HexColor.contrastRatio(fg, bg), 4.5, "\(name) \(label) (texto, WCAG AA)", file: file, line: line)
         }
-        let graphics: [(String, RGBColor, RGBColor)] = [
+        let graphics: [(String, HexColor, HexColor)] = [
             ("equipo 1/tarjeta", p.teamFirst, p.card),
             ("equipo 2/tarjeta", p.teamSecond, p.card),
             ("acento/tarjeta", p.accent, p.card),
             ("acento/fondo", p.accent, p.background),
         ]
         for (label, fg, bg) in graphics {
-            XCTAssertGreaterThanOrEqual(RGBColor.contrastRatio(fg, bg), 3.0, "\(name) \(label) (elementos gráficos, WCAG 1.4.11)", file: file, line: line)
+            XCTAssertGreaterThanOrEqual(HexColor.contrastRatio(fg, bg), 3.0, "\(name) \(label) (elementos gráficos, WCAG 1.4.11)", file: file, line: line)
         }
     }
 
