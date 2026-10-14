@@ -69,7 +69,7 @@ struct HomeView: View {
             Text("Marcador de mus")
                 .font(.largeTitle.bold())
                 .multilineTextAlignment(.center)
-            Text("Sin cuenta, sin anuncios, sin conexión.")
+            Text("Sin cuenta y sin conexión.")
                 .foregroundStyle(Theme.mutedText)
                 .multilineTextAlignment(.center)
         }

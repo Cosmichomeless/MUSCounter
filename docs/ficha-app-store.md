@@ -1,6 +1,6 @@
 # Ficha de App Store
 
-Estado: **borrador de textos listo para pegar en App Store Connect; capturas pendientes.** Cubre #21. Nada de esto se ha subido a App Store Connect: hacerlo es una acción del titular (o, con su confirmación expresa, de una herramienta).
+Estado: **textos y capturas listos para subir a App Store Connect.** Cubre #21. Nada de esto se ha subido a App Store Connect: hacerlo es una acción del titular (o, con su confirmación expresa, de una herramienta).
 
 Los textos están en español (idioma principal). Entre paréntesis, la longitud actual y el límite de Apple.
 
@@ -87,6 +87,19 @@ Orden propuesto (contar el flujo de una partida real):
 | 5 | Victoria | «Revancha en un toque» |
 | 6 | Marcador en tema claro | «Claro u oscuro» |
 
+Capturas hechas, en [`docs/capturas/`](capturas/) (1320 × 2868, iPhone 17 Pro Max, barra de estado a las 9:41, sin marco ni titular):
+
+| # | Fichero |
+|---|---|
+| 1 | `01-marcador.png` |
+| 2 | `02-cantidad.png` |
+| 3 | `03-jugadas.png` |
+| 4 | `04-nueva-partida.png` |
+| 5 | `05-victoria.png` |
+| 6 | `06-claro.png` |
+
+Se generaron con la app (build de la versión actual, sin banners de prueba) sobre partidas de ejemplo con nombres «Nosotros» / «Ellos». Los titulares en español sobre la captura son opcionales; Apple acepta las capturas tal cual. Si la versión enviada cambia el aspecto de alguna pantalla, hay que repetirlas.
+
 Reglas: capturas de la **versión enviada**, sin banner de prueba («Test Ad») visible, sin datos personales, con nombres de equipo neutros («Nosotros» / «Ellos»). Los titulares sobre la captura van en español.
 
 ## 6. Icono
@@ -98,5 +111,5 @@ El icono (`App/Assets.xcassets/AppIcon.appiconset`) se genera con `scripts/make-
 - [x] Nombre, subtítulo, descripción, palabras clave y categoría redactados (esta página).
 - [x] Enlaces de soporte y privacidad públicos y respondiendo (200); se muestran también dentro de la app.
 - [x] Icono con identidad propia (claro, oscuro y tintado).
-- [ ] Capturas de la versión enviada (§5).
+- [x] Capturas de la versión actual (§5, `docs/capturas/`); repetirlas solo si cambia la interfaz antes de enviar.
 - [ ] **[a cargo del titular]** Copyright, disponibilidad del nombre «Tanteo Mus» y alta de la ficha en App Store Connect.
