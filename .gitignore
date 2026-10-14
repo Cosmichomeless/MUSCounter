@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Xcode (el .xcodeproj se genera con XcodeGen a partir de project.yml)
+*.xcodeproj
+*.xcworkspace
+xcuserdata/
+DerivedData/
+build/
+*.xcresult
+
+# SwiftPM
+.build/
+.swiftpm/
+Packages/*/.build/
+
+# Secretos y certificados: nunca en el repositorio
+*.p12
+*.cer
+*.mobileprovision
+*.p8
+.env
+Secrets.xcconfig
