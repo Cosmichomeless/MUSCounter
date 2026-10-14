@@ -158,6 +158,8 @@ struct MusSegmented<Value: Hashable>: View {
                 } label: {
                     Text(option.label)
                         .font(.subheadline.weight(.bold))
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                         .foregroundStyle(selected ? Theme.onAccent : Theme.text)
                         .frame(maxWidth: .infinity, minHeight: 48)
                         .background(
