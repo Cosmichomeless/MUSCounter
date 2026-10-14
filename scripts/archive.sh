@@ -6,7 +6,15 @@ cd "$(dirname "$0")/.."
 
 # Antes de preparar una versión: la especificación y las pruebas deben coincidir y pasar.
 python3 scripts/check_rules_tests.py
+python3 scripts/check_ads_isolation.py
 (cd Packages/MusCore && swift test)
+
+# Nunca se archiva con los anuncios de prueba de Google: ni TestFlight ni App Store deben llevarlos.
+if ! grep -qE '^ADMOB_APP_ID *= *ca-app-pub-[0-9]{16}~[0-9]{10}' Config/Secrets.xcconfig 2>/dev/null \
+   || grep -q '3940256099942544' Config/Secrets.xcconfig; then
+  echo "Faltan los identificadores reales de AdMob en Config/Secrets.xcconfig (ver Secrets.xcconfig.example)." >&2
+  exit 1
+fi
 
 xcodegen generate
 mkdir -p build

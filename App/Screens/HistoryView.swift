@@ -101,6 +101,7 @@ struct HistoryView: View {
             }
         }
         .foregroundStyle(Theme.text)
+        .safeAreaInset(edge: .bottom, spacing: 0) { AdSlot(placement: .history) }
         .musScreen()
         .confirmationDialog(
             "¿Borrar la partida?",

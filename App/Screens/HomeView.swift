@@ -16,6 +16,7 @@ struct HomeView: View {
             ScrollView { content }
         }
         .foregroundStyle(Theme.text)
+        .safeAreaInset(edge: .bottom, spacing: 0) { AdSlot(placement: .home) }
         .musScreen()
         .confirmationDialog(
             "Ya tienes una partida en curso",

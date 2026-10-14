@@ -1,4 +1,5 @@
 import SwiftUI
+import MusAds
 import MusCore
 
 extension ThemePreference {
@@ -14,6 +15,7 @@ extension ThemePreference {
 
 struct SettingsView: View {
     let model: AppModel
+    @Environment(AdsController.self) private var ads: AdsController?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -74,6 +76,17 @@ struct SettingsView: View {
                         }
                         .padding(.horizontal, Metrics.spacingL)
                         .background(Theme.card, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+                    }
+
+                    if let ads, ads.isEnabled {
+                        field("Anuncios", note: "Banners discretos en Inicio, Historial y al terminar la partida; nunca durante el marcador.") {
+                            if ads.privacyOptionsRequired {
+                                Button("Revisar consentimiento de anuncios") {
+                                    Task { await ads.presentPrivacyOptions() }
+                                }
+                                .buttonStyle(.musSecondary)
+                            }
+                        }
                     }
 
                     Text("Estos ajustes se usan al crear partidas nuevas. Las partidas ya empezadas o guardadas no cambian.")

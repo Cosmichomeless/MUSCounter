@@ -54,6 +54,7 @@ struct ResultView: View {
                 .padding(Metrics.spacingL)
             }
             .foregroundStyle(Theme.text)
+            .safeAreaInset(edge: .bottom, spacing: 0) { AdSlot(placement: .result) }
             .musScreen()
         }
     }

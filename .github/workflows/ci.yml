@@ -19,6 +19,8 @@ jobs:
         run: python3 scripts/check_docs.py
       - name: Comprobar que cada caso de la especificación tiene prueba
         run: python3 scripts/check_rules_tests.py
+      - name: Comprobar que los anuncios siguen aislados del marcador
+        run: python3 scripts/check_ads_isolation.py
 
   core:
     name: Pruebas de MusCore

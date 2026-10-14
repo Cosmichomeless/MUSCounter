@@ -1,12 +1,16 @@
+import MusAds
 import SwiftUI
 
 @main
 struct MUSCounterApp: App {
     @State private var model = AppModel.live()
+    @State private var ads = AdsController.live()
 
     var body: some Scene {
         WindowGroup {
             RootView(model: model)
+                .environment(ads)
+                .task { await ads.start() }
         }
     }
 }

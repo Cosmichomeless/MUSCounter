@@ -39,8 +39,11 @@ El `.xcodeproj` produce conflictos de fusión constantes. `project.yml` es legib
 - Beta cerrada (M3): grupo externo.
 - Firma: certificados y perfiles **nunca** en el repositorio; se gestionan en el llavero local o en secretos de CI.
 
-### D7. Sin red, sin cuenta, sin analítica en la v1
-Simplifica la privacidad (ficha "Datos no recopilados") y elimina clases enteras de fallos.
+### D7. Sin cuenta ni analítica propia; la red solo para anuncios
+El marcador funciona sin red y sin cuenta. La única conexión es la de los banners de AdMob (D8), aislada del resto. Ver [anuncios](anuncios.md).
+
+### D8. Anuncios en un módulo aislado
+`Packages/MusAds` es el único que importa el SDK de Google (AdMob y UMP). `MusCore` y el marcador no lo conocen; sin red, sin consentimiento o con un fallo no se muestra nada y la app se comporta igual. `scripts/check_ads_isolation.py` lo vigila en CI.
 
 ## Convenciones
 
