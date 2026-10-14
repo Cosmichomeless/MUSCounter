@@ -16,6 +16,7 @@ extension ThemePreference {
 struct SettingsView: View {
     let model: AppModel
     @Environment(AdsController.self) private var ads: AdsController?
+    @State private var showsPrivacy = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -89,6 +90,11 @@ struct SettingsView: View {
                         }
                     }
 
+                    field("Privacidad y soporte", note: "Qué datos usa la app, cómo contactar y cómo ejercer tus derechos.") {
+                        Button("Privacidad y soporte") { showsPrivacy = true }
+                            .buttonStyle(.musSecondary)
+                    }
+
                     Text("Estos ajustes se usan al crear partidas nuevas. Las partidas ya empezadas o guardadas no cambian.")
                         .font(.footnote)
                         .foregroundStyle(Theme.mutedText)
@@ -98,6 +104,9 @@ struct SettingsView: View {
         }
         .foregroundStyle(Theme.text)
         .musScreen()
+        .sheet(isPresented: $showsPrivacy) {
+            PrivacyView(info: SupportInfo(), showsAds: ads?.isEnabled == true)
+        }
     }
 
     private func feedbackToggle(_ title: String, isOn: Binding<Bool>) -> some View {
