@@ -6,8 +6,8 @@
 
 | Área | Estado |
 |---|---|
-| Código | No existe. El repositorio solo contenía un `README.md` mínimo. |
-| Proyecto Xcode / compilación | No existe. |
+| Código | Auditoría inicial: no existía; el repositorio solo contenía un `README.md` mínimo. Desde entonces M1 y M2 están implementados (`MusCore` + app SwiftUI). |
+| Proyecto Xcode / compilación | Auditoría inicial: no existía. Ahora se genera con `project.yml` (ver [compilación](compilacion.md)). |
 | Decisiones técnicas previas | Ninguna. Las decisiones se fijan en [arquitectura](arquitectura.md). |
 | Trabajo ya iniciado | Solo el backlog de lanzamiento en issues (#1–#25). |
 | CI | Se añade en esta misma entrega (`.github/workflows/ci.yml`). |
@@ -31,7 +31,7 @@ Entra (cada punto tiene su issue en M2):
 4. **Final de partida**: ganador y motivo; revancha y partida nueva; guardado único en historial.
 5. **Recuperar** la partida en curso al reabrir la app, e **historial** de partidas terminadas.
 6. **Preferencias**: objetivo de tantos, vacas y tema (claro/oscuro/sistema).
-7. Todo **offline**, **sin cuenta**, **sin analítica ni anuncios** en la primera versión.
+7. Marcador **offline** (los anuncios son lo único que usa red), **sin cuenta**, **sin analítica propia**; con **anuncios discretos** que nunca aparecen en la pantalla del marcador (ver [propuesta de valor](propuesta-de-valor.md)).
 
 ## 4. Fuera del MVP (versiones posteriores)
 
