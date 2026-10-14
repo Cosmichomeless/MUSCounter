@@ -14,6 +14,12 @@ struct GameView: View {
             }
             .foregroundStyle(Theme.text)
             .musScreen()
+            .sheet(item: Binding(get: { model.sheet }, set: { model.sheet = $0 })) { sheet in
+                switch sheet {
+                case let .amount(team): AmountSheet(model: model, game: game, team: team)
+                case .ordago: OrdagoSheet(model: model, game: game)
+                }
+            }
         }
     }
 
@@ -43,6 +49,8 @@ struct GameView: View {
                         enabled: game.isInProgress
                     ) { amount in
                         model.score(amount, to: team)
+                    } onMore: {
+                        model.sheet = .amount(team)
                     }
                     .accessibilityElement(children: .contain)
                     .accessibilityLabel("\(game.teamNames[team]), \(game.state.score[team]) tantos")
@@ -54,6 +62,10 @@ struct GameView: View {
                 selection: Binding(get: { model.selectedLance }, set: { model.selectedLance = $0 })
             )
             .disabled(!game.isInProgress)
+
+            Button("¡Órdago!") { model.sheet = .ordago }
+                .buttonStyle(.musDanger)
+                .disabled(!game.isInProgress)
         }
         .padding(Metrics.spacingL)
     }

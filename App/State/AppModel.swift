@@ -17,6 +17,8 @@ final class AppModel {
     var draft: GameSetupDraft = .standard
     /// Lance al que se apuntan los tantos con los botones del marcador.
     var selectedLance: Lance = .grande
+    /// Hoja abierta sobre el marcador (cantidad libre u órdago).
+    var sheet: GameSheet?
     /// Mensaje de error para mostrar al usuario (nil si no hay).
     var errorMessage: String?
 
@@ -75,6 +77,11 @@ final class AppModel {
     /// Apunta `amount` tantos del lance seleccionado al equipo `team`.
     func score(_ amount: Int, to team: TeamID) {
         perform { try $0.addScore(amount, lance: selectedLance, to: team) }
+    }
+
+    /// El equipo `winner` gana un órdago aceptado.
+    func declareOrdago(winner: TeamID) {
+        perform { try $0.declareOrdago(winner: winner) }
     }
 
     /// Aplica un cambio a la partida y lo guarda. Si falla (regla o guardado) el estado no cambia.
