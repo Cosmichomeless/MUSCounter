@@ -66,6 +66,16 @@ struct SettingsView: View {
                         )
                     }
 
+                    field("Respuesta al apuntar", note: "El sonido respeta el modo silencioso del iPhone. El marcador se entiende igual sin vibración ni sonido.") {
+                        VStack(spacing: 0) {
+                            feedbackToggle("Vibración", isOn: binding(\.hapticsEnabled))
+                            Divider().overlay(Theme.cardRaised)
+                            feedbackToggle("Sonido", isOn: binding(\.soundEnabled))
+                        }
+                        .padding(.horizontal, Metrics.spacingL)
+                        .background(Theme.card, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+                    }
+
                     Text("Estos ajustes se usan al crear partidas nuevas. Las partidas ya empezadas o guardadas no cambian.")
                         .font(.footnote)
                         .foregroundStyle(Theme.mutedText)
@@ -75,6 +85,13 @@ struct SettingsView: View {
         }
         .foregroundStyle(Theme.text)
         .musScreen()
+    }
+
+    private func feedbackToggle(_ title: String, isOn: Binding<Bool>) -> some View {
+        Toggle(title, isOn: isOn)
+            .font(.headline)
+            .tint(Theme.accent)
+            .frame(minHeight: Metrics.minTapTarget)
     }
 
     private func binding<Value>(_ keyPath: WritableKeyPath<Preferences, Value>) -> Binding<Value> {

@@ -24,15 +24,36 @@ public struct Preferences: Codable, Equatable, Sendable {
     /// Vacas que hay que ganar para ganar la partida (1 = sin vacas).
     public var vacasToWin: Int
     public var theme: ThemePreference
+    /// Vibración suave al apuntar tantos y al ganar. Activada de forma predeterminada.
+    public var hapticsEnabled: Bool
+    /// Sonido breve al apuntar tantos y al ganar. Desactivado de forma predeterminada: en la mesa
+    /// se juega con ruido y conversación, y se activa solo si se quiere.
+    public var soundEnabled: Bool
 
     public init(
         goal: Int = GameRules.standard.goal,
         vacasToWin: Int = GameRules.standard.vacasToWin,
-        theme: ThemePreference = .system
+        theme: ThemePreference = .system,
+        hapticsEnabled: Bool = true,
+        soundEnabled: Bool = false
     ) {
         self.goal = goal
         self.vacasToWin = vacasToWin
         self.theme = theme
+        self.hapticsEnabled = hapticsEnabled
+        self.soundEnabled = soundEnabled
+    }
+
+    /// Los ficheros anteriores al esquema 3 no tienen háptica ni sonido: se usan los valores predeterminados.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            goal: try c.decode(Int.self, forKey: .goal),
+            vacasToWin: try c.decode(Int.self, forKey: .vacasToWin),
+            theme: try c.decode(ThemePreference.self, forKey: .theme),
+            hapticsEnabled: try c.decodeIfPresent(Bool.self, forKey: .hapticsEnabled) ?? true,
+            soundEnabled: try c.decodeIfPresent(Bool.self, forKey: .soundEnabled) ?? false
+        )
     }
 
     public var rules: GameRules { GameRules(goal: goal, vacasToWin: vacasToWin) }

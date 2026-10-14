@@ -20,7 +20,17 @@ Referencia: issue #17 (M3). Qué hace la app, qué comprueban las pruebas autom�
 - `DesignTokensTests` (MusCore): contraste de la paleta y tamaños mínimos.
 - `AccessibilityLayoutTests` (app): el marcador se monta con todos los tamaños de texto, en vertical y horizontal.
 
-## 3. Revisión manual antes de cada versión (no automatizable)
+## 3. Háptica y sonido
+
+- **Qué hace:** al apuntar tantos suena un toque suave y vibra levemente; al ganar la partida, una vibración de éxito y un sonido distinto. Ajustes → «Respuesta al apuntar» permite desactivar cada canal. Por defecto: vibración activada, sonido desactivado (en una mesa de mus el sonido molesta).
+- **El marcador no depende de ellos:** el tanteo, el aviso de «Deshacer» y la victoria se ven y se anuncian por VoiceOver igual con ambos canales desactivados.
+- **Modo silencioso:** el sonido usa sonidos de sistema, que respetan el interruptor de silencio del iPhone.
+- **No bloquea la anotación:** la respuesta se dispara sin esperar; el siguiente toque se atiende siempre.
+- **Sin respuesta:** los ajustes manuales ±1, los rechazos y el deshacer no vibran ni suenan.
+- **Código:** `App/State/Feedback.swift` (protocolo `FeedbackPlayer`); `FeedbackTests` lo comprueba con un espía.
+- **Pendiente:** probar la sensación real en un iPhone físico (el simulador no vibra).
+
+## 4. Revisión manual antes de cada versión (no automatizable)
 
 Hecha en un iPhone real o en el simulador. **Pendiente de realizar y anotar con la versión candidata:**
 
