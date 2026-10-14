@@ -21,3 +21,6 @@ Packages/*/.build/
 *.p8
 .env
 Secrets.xcconfig
+
+# Generados por XcodeGen
+Generated/
