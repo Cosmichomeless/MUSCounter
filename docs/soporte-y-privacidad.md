@@ -48,7 +48,7 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 
 ## 5. Antes del lanzamiento
 
-- [ ] **[a cargo del titular]** Cuenta e IDs reales de AdMob; mensaje de consentimiento UMP publicado en AdMob (EEE/Reino Unido/Suiza).
+- [x] **[a cargo del titular]** Cuenta e IDs reales de AdMob; mensaje de consentimiento UMP publicado en AdMob (EEE/Reino Unido/Suiza).
 - [x] Política y soporte públicos en GitHub Pages (`PRIVACY_POLICY_URL` y `SUPPORT_URL` ya configurados).
 - [ ] **[a cargo del titular]** Revisión legal del [borrador](privacidad.md) y cumplimentar la ficha de privacidad según §4.
 - [ ] Probar en un dispositivo con región EEE: aparece el formulario UMP y «Revisar consentimiento» funciona.
