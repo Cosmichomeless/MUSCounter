@@ -25,7 +25,7 @@ python3 scripts/check_rules_tests.py  # cada caso R-NN de la especificación tie
 
 | Ajuste | Valor | Dónde |
 |---|---|---|
-| Bundle ID | `com.cosmichomeless.muscounter` (provisional hasta cerrar el nombre) | `Config/Shared.xcconfig` |
+| Bundle ID | `com.cosmichomeless.muscounter` (definitivo para la 1.0: es el que se usa al crear la app en App Store Connect) | `Config/Shared.xcconfig` |
 | iOS mínimo | 17.0 | `project.yml`, `Config/Shared.xcconfig` |
 | Dispositivos | solo iPhone | `Config/Shared.xcconfig` |
 | Versión / build | `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` | `Config/Shared.xcconfig` |
@@ -43,7 +43,7 @@ python3 scripts/check_rules_tests.py  # cada caso R-NN de la especificación tie
 
 1. Sube `CURRENT_PROJECT_VERSION` en `Config/Shared.xcconfig` (cada subida necesita un número de build nuevo).
 2. `DEVELOPMENT_TEAM=XXXXXXXXXX ./scripts/archive.sh` → antes de archivar comprueba la especificación y ejecuta `swift test`; crea `build/MUSCounter.xcarchive`.
-3. Xcode → Window → Organizer → Archives → *Distribute App* → *App Store Connect* → *Upload*.
+3. Sube la build: `./scripts/upload.sh` solo exporta el `.ipa` a `build/export` (no sube nada) y `./scripts/upload.sh --subir` lo sube a App Store Connect; también vale Xcode → Window → Organizer → Archives → *Distribute App* → *App Store Connect* → *Upload*. La app debe existir ya en App Store Connect.
 4. En App Store Connect → TestFlight, añade la build al grupo de pruebas internas.
 
 ## CI

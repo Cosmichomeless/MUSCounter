@@ -4,18 +4,19 @@ Lista de comprobación propia de esta app, basada en la guía general de publica
 
 ## 1. Antes de archivar
 
-- [ ] Subir `MARKETING_VERSION` de `0.1.0` a `1.0` en `Config/Shared.xcconfig`; `CURRENT_PROJECT_VERSION` sube en cada subida.
-- [ ] Confirmar el **Bundle ID** definitivo (`com.cosmichomeless.muscounter` figura como provisional en [compilación](compilacion.md)). Debe estar registrado y es el de la app creada en App Store Connect.
-- [ ] `Config/Secrets.xcconfig` presente en el Mac que archiva (`DEVELOPMENT_TEAM` e identificadores reales de AdMob); la Release debe llevar IDs reales, no los de prueba.
-- [ ] `ITSAppUsesNonExemptEncryption = NO`: ya está en `project.yml`.
-- [ ] `App/PrivacyInfo.xcprivacy` presente (sin rastreo, sin datos propios recopilados); AdMob y UMP aportan su manifiesto. Comprobar el informe de privacidad del archivo (*Product › Archive › Generate Privacy Report*) frente a la declaración de §3.
-- [ ] Xcode con el SDK que Apple exija en ese momento (el mínimo para compilar, Xcode 16, no basta para subir si Apple pide uno más nuevo).
-- [ ] Pruebas verdes: `python3 scripts/check_docs.py`, `check_rules_tests.py`, `swift test` en `Packages/MusCore` y `./scripts/test-app.sh`.
+- [x] `MARKETING_VERSION` en `1.0` (`Config/Shared.xcconfig`); `CURRENT_PROJECT_VERSION` sube en cada subida.
+- [x] **Bundle ID** definitivo: `com.cosmichomeless.muscounter`. La app se crea en App Store Connect con este identificador (nombre «Tanteo Mus», idioma principal español, SKU a elección del titular).
+- [x] `Config/Secrets.xcconfig` presente en el Mac que archiva (`DEVELOPMENT_TEAM` e identificadores reales de AdMob); la Release debe llevar IDs reales, no los de prueba.
+- [x] `ITSAppUsesNonExemptEncryption = NO`: ya está en `project.yml`.
+- [x] `App/PrivacyInfo.xcprivacy` presente (sin rastreo, sin datos propios recopilados); AdMob y UMP aportan su manifiesto. Comprobar el informe de privacidad del archivo (*Product › Archive › Generate Privacy Report*) frente a la declaración de §3.
+- [x] Xcode con el SDK que Apple exija en ese momento (el mínimo para compilar, Xcode 16, no basta para subir si Apple pide uno más nuevo).
+- [x] Pruebas verdes: `python3 scripts/check_docs.py`, `check_rules_tests.py`, `swift test` en `Packages/MusCore` y `./scripts/test-app.sh`.
 
 ## 2. Build y pruebas en dispositivo
 
-- [ ] `DEVELOPMENT_TEAM=… ./scripts/archive.sh`, subir con Organizer y esperar a que la build esté `VALID` en TestFlight.
-- [ ] Instalar la Release desde TestFlight en un **iPhone físico** y comprobar: arranque sin cuenta ni conexión, partida completa, háptica, rotación, VoiceOver, ajuste «Revisar consentimiento» y que los anuncios salen con los IDs reales (sin pulsarlos).
+- [x] `./scripts/archive.sh` genera el archivo firmado y `./scripts/upload.sh` exporta el `.ipa` (comprobado, sin subir): 1.0, build 1, IDs reales de AdMob.
+- [ ] Crear la app en App Store Connect (a cargo del titular) y subir con `./scripts/upload.sh --subir` o con Organizer; esperar a que la build esté `VALID` en TestFlight.
+- [x] Probada en un **iPhone físico** por el titular, sin incidencias. Repetir desde TestFlight con la build subida y comprobar: arranque sin cuenta ni conexión, partida completa, háptica, rotación, VoiceOver, ajuste «Revisar consentimiento» y que los anuncios salen con los IDs reales (sin pulsarlos).
 - [ ] Beta con jugadores reales según [beta cerrada](beta-cerrada.md).
 
 ## 3. App Store Connect (cada paso lo confirma el titular)
