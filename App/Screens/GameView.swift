@@ -165,6 +165,7 @@ struct GameView: View {
                             axis: .vertical,
                             title: "Lance"
                         )
+                        if game.tracksPlayers, game.isInProgress { manoBar(game, compact: true) }
                     }
                 }
                 .frame(width: 150)
@@ -194,6 +195,8 @@ struct GameView: View {
 
             panels(game)
 
+            if game.tracksPlayers, game.isInProgress { manoBar(game) }
+
             MusSegmented(
                 options: Lance.allCases.map { MusOption(value: $0, label: $0.displayName) },
                 selection: lanceBinding(),
@@ -219,6 +222,35 @@ struct GameView: View {
             HStack(spacing: Metrics.spacingM) {
                 ForEach(TeamID.allCases, id: \.self) { teamPanel(game, $0) }
             }
+        }
+    }
+
+    /// Quién es mano y el botón para pasar la mano al siguiente jugador al terminar la mano.
+    @ViewBuilder private func manoBar(_ game: Game, compact: Bool = false) -> some View {
+        let name = game.manoName ?? ""
+        if compact {
+            VStack(spacing: Metrics.spacingXS) {
+                Text("Mano: \(name)")
+                    .font(.footnote.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                Button("Siguiente mano") { model.nextHand() }
+                    .buttonStyle(.musSecondary)
+            }
+        } else {
+            HStack(spacing: Metrics.spacingM) {
+                Label {
+                    Text("Mano: \(name)").font(.subheadline.weight(.semibold)).lineLimit(2)
+                } icon: {
+                    Image(systemName: "hand.raised.fill").foregroundStyle(Theme.accent)
+                }
+                Spacer(minLength: 0)
+                Button("Siguiente mano") { model.nextHand() }
+                    .buttonStyle(.musSecondary)
+                    .fixedSize(horizontal: true, vertical: false)
+            }
+            .musCard()
+            .accessibilityElement(children: .contain)
         }
     }
 

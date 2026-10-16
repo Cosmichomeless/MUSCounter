@@ -4,6 +4,7 @@ import MusCore
 /// Pantalla de fin de partida: quién ha ganado, por qué y qué hacer a continuación.
 struct ResultView: View {
     let model: AppModel
+    @State private var showDetail = false
 
     var body: some View {
         if let game = model.game, case let .finished(winner, reason) = game.status {
@@ -38,6 +39,7 @@ struct ResultView: View {
 
                     VStack(spacing: Metrics.spacingM) {
                         Button("Revancha") { model.rematch() }.buttonStyle(.musPrimary)
+                        Button("Ver resumen y compartir") { showDetail = true }.buttonStyle(.musSecondary)
                         Button("Nueva partida") { model.newGameFromResult() }.buttonStyle(.musSecondary)
                         Button("Volver al inicio") { model.goHome() }.buttonStyle(.musSecondary)
                         if game.canUndo {
@@ -56,6 +58,7 @@ struct ResultView: View {
             .foregroundStyle(Theme.text)
             .safeAreaInset(edge: .bottom, spacing: 0) { AdSlot(placement: .result) }
             .musScreen()
+            .sheet(isPresented: $showDetail) { GameDetailView(game: game) }
         }
     }
 

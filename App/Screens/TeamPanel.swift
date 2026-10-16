@@ -19,6 +19,7 @@ struct TeamPanel: View {
     let onMore: () -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @AppStorage(PiedrasPreference.key) private var showPiedras = false
 
     private var columns: [GridItem] {
         let count = dynamicTypeSize.isAccessibilitySize ? 2 : 3
@@ -88,6 +89,10 @@ struct TeamPanel: View {
 
             ProgressMeter(value: score, goal: goal, team: team)
 
+            if showPiedras, !compact {
+                PiedrasView(value: score, color: Theme.team(team))
+            }
+
             HStack {
                 Text("\(score)/\(goal)")
                 Spacer(minLength: 0)
@@ -144,5 +149,45 @@ struct AmountButtonStyle: ButtonStyle {
             )
             .opacity(isEnabled ? 1 : 0.4)
             .contentShape(Rectangle())
+    }
+}
+
+/// Ajuste visual: dibujar el tanteo como piedras (grupos de cinco y sueltas). No cambia ninguna regla.
+enum PiedrasPreference {
+    static let key = "showPiedras"
+}
+
+/// El tanteo dibujado como marcas de cinco en cinco: cuatro rayas y una cruzada por cada grupo,
+/// y las sueltas al final. Es decorativo: el número y la barra ya dicen lo mismo a VoiceOver.
+struct PiedrasView: View {
+    let value: Int
+    let color: Color
+
+    var body: some View {
+        let (groups, singles) = Piedras.split(value)
+        let count = groups + (singles > 0 ? 1 : 0)
+        Canvas { context, size in
+            guard count > 0 else { return }
+            let gap: CGFloat = 4
+            let width = min(22, (size.width - gap * CGFloat(count - 1)) / CGFloat(count))
+            for index in 0..<count {
+                let x = CGFloat(index) * (width + gap)
+                let strokes = index < groups ? 4 : singles
+                let step = strokes > 1 ? width / CGFloat(strokes - 1) : 0
+                var path = Path()
+                for stroke in 0..<strokes {
+                    let sx = strokes > 1 ? x + CGFloat(stroke) * step : x + width / 2
+                    path.move(to: CGPoint(x: sx, y: 2))
+                    path.addLine(to: CGPoint(x: sx, y: size.height - 2))
+                }
+                if index < groups {
+                    path.move(to: CGPoint(x: x - 2, y: size.height - 4))
+                    path.addLine(to: CGPoint(x: x + width + 2, y: 4))
+                }
+                context.stroke(path, with: .color(color), style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+            }
+        }
+        .frame(height: 24)
+        .accessibilityHidden(true)
     }
 }

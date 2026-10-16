@@ -56,6 +56,10 @@ struct HistoryView: View {
     let model: AppModel
     @State private var gameToDelete: Game?
     @State private var confirmDeleteAll = false
+    @State private var detailGame: Game?
+    @State private var tab: Tab = .games
+
+    private enum Tab: Hashable { case games, players }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -74,27 +78,39 @@ struct HistoryView: View {
             }
             .padding(Metrics.spacingL)
 
+            MusSegmented(
+                options: [MusOption(value: Tab.games, label: "Partidas"), MusOption(value: Tab.players, label: "Jugadores")],
+                selection: $tab,
+                title: "Historial"
+            )
+            .padding(.horizontal, Metrics.spacingL)
+            .padding(.bottom, Metrics.spacingM)
+
             ScrollView {
                 VStack(alignment: .leading, spacing: Metrics.spacingM) {
                     if let message = model.errorMessage {
                         ErrorBanner(message: message)
                     }
-                    if let game = model.game, game.isInProgress {
-                        activeCard(game)
-                    }
-                    if model.history.isEmpty {
-                        Text("Todavía no hay partidas guardadas.")
-                            .foregroundStyle(Theme.mutedText)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding(.top, Metrics.spacingL)
+                    if tab == .players {
+                        PlayersStatsView(model: model)
                     } else {
-                        ForEach(model.history) { row($0) }
+                        if let game = model.game, game.isInProgress {
+                            activeCard(game)
+                        }
+                        if model.history.isEmpty {
+                            Text("Todavía no hay partidas guardadas.")
+                                .foregroundStyle(Theme.mutedText)
+                                .frame(maxWidth: .infinity, alignment: .center)
+                                .padding(.top, Metrics.spacingL)
+                        } else {
+                            ForEach(model.history) { row($0) }
+                        }
                     }
                 }
                 .padding(.horizontal, Metrics.spacingL)
             }
 
-            if !model.history.isEmpty {
+            if tab == .games, !model.history.isEmpty {
                 Button("Borrar todo el historial") { confirmDeleteAll = true }
                     .buttonStyle(.musDanger)
                     .padding(Metrics.spacingL)
@@ -103,6 +119,7 @@ struct HistoryView: View {
         .foregroundStyle(Theme.text)
         .safeAreaInset(edge: .bottom, spacing: 0) { AdSlot(placement: .history) }
         .musScreen()
+        .sheet(item: $detailGame) { GameDetailView(game: $0) }
         .confirmationDialog(
             "¿Borrar la partida?",
             isPresented: Binding(get: { gameToDelete != nil }, set: { if !$0 { gameToDelete = nil } }),
@@ -155,6 +172,10 @@ struct HistoryView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilityElement(children: .combine)
             .accessibilityLabel(HistoryText.accessibilityLabel(game))
+            .contentShape(Rectangle())
+            .onTapGesture { detailGame = game }
+            .accessibilityAddTraits(.isButton)
+            .accessibilityHint("Abre el resumen y la gráfica")
 
             Button {
                 gameToDelete = game

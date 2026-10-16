@@ -17,6 +17,8 @@ struct SettingsView: View {
     let model: AppModel
     @Environment(AdsController.self) private var ads: AdsController?
     @State private var showsPrivacy = false
+    @AppStorage(PiedrasPreference.key) private var showPiedras = false
+    @AppStorage(ScoreboardActivity.preferenceKey) private var showLiveScoreboard = true
 
     var body: some View {
         VStack(spacing: 0) {
@@ -67,6 +69,19 @@ struct SettingsView: View {
                             selection: binding(\.theme),
                             title: "Tema"
                         )
+                    }
+
+                    field("Piedras", note: "Dibuja el tanteo de cada equipo en grupos de cinco, como las piedras de la mesa. Solo cambia cómo se ve el marcador, no las reglas.") {
+                        feedbackToggle("Mostrar piedras", isOn: $showPiedras)
+                            .padding(.horizontal, Metrics.spacingL)
+                            .background(Theme.card, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+                    }
+
+                    field("Pantalla de bloqueo", note: "Mientras hay una partida en curso, muestra el tanteo en la pantalla de bloqueo y en la Isla Dinámica. Se queda en tu iPhone y desaparece al terminar la partida.") {
+                        feedbackToggle("Marcador en la pantalla de bloqueo", isOn: $showLiveScoreboard)
+                            .padding(.horizontal, Metrics.spacingL)
+                            .background(Theme.card, in: RoundedRectangle(cornerRadius: Metrics.cornerRadius, style: .continuous))
+                            .onChange(of: showLiveScoreboard) { model.refreshScoreboard() }
                     }
 
                     field("Respuesta al apuntar", note: "El sonido respeta el modo silencioso del iPhone. El marcador se entiende igual sin vibración ni sonido.") {

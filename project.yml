@@ -25,9 +25,11 @@ targets:
     platform: iOS
     sources:
       - App
+      - Shared
     dependencies:
       - package: MusCore
       - package: MusAds
+      - target: MUSCounterLiveActivity
     info:
       path: Generated/MUSCounter-Info.plist
       properties:
@@ -92,6 +94,7 @@ targets:
           - SKAdNetworkIdentifier: 3rd42ekr43.skadnetwork
           - SKAdNetworkIdentifier: 97r2b46745.skadnetwork
           - SKAdNetworkIdentifier: 3qcr597p9d.skadnetwork
+        NSSupportsLiveActivities: true
         UILaunchScreen: {}
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: false
@@ -103,6 +106,27 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: $(PRODUCT_BUNDLE_IDENTIFIER)
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+
+  MUSCounterLiveActivity:
+    type: app-extension
+    platform: iOS
+    sources:
+      - LiveActivity
+      - Shared
+    dependencies:
+      - package: MusCore
+    info:
+      path: Generated/MUSCounterLiveActivity-Info.plist
+      properties:
+        CFBundleDisplayName: Tanteo Mus
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(PRODUCT_BUNDLE_IDENTIFIER).liveactivity
+        SKIP_INSTALL: YES
 
   MUSCounterTests:
     type: bundle.unit-test
