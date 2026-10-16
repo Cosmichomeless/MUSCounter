@@ -4,9 +4,11 @@ public enum ActionKind: Codable, Equatable, Sendable {
     case score(Lance)
     case ordago
     case adjustment
+    /// Cierra la mano en curso: la mano pasa al siguiente asiento. `amount` es 0.
+    case nextHand
 }
 
-/// Una acción registrada en la partida. `amount` es 0 para el órdago y puede ser negativo en un ajuste.
+/// Una acción registrada en la partida. `amount` es 0 para el órdago y para pasar de mano, y puede ser negativo en un ajuste.
 public struct GameAction: Codable, Equatable, Identifiable, Sendable {
     public let id: UUID
     public let team: TeamID
@@ -41,8 +43,23 @@ public struct GameState: Codable, Equatable, Sendable {
     public var completedVacas: [VacaResult] = []
     public var winner: TeamID?
     public var winReason: WinReason?
+    /// Manos cerradas con «siguiente mano». La partida empieza en la mano 0.
+    public var handsPlayed = 0
 
     public static let initial = GameState()
+
+    public init() {}
+
+    /// Las partidas guardadas antes del esquema 4 no llevan manos: empiezan en 0.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        score = try c.decode(PerTeam<Int>.self, forKey: .score)
+        vacas = try c.decode(PerTeam<Int>.self, forKey: .vacas)
+        completedVacas = try c.decode([VacaResult].self, forKey: .completedVacas)
+        winner = try c.decodeIfPresent(TeamID.self, forKey: .winner)
+        winReason = try c.decodeIfPresent(WinReason.self, forKey: .winReason)
+        handsPlayed = try c.decodeIfPresent(Int.self, forKey: .handsPlayed) ?? 0
+    }
 
     /// Devuelve el estado tras aplicar `action`. No muta el estado actual.
     func applying(_ action: GameAction, rules: GameRules) throws -> GameState {
@@ -69,6 +86,10 @@ public struct GameState: Codable, Equatable, Sendable {
             next.score[team] = rules.goal
             vacaWon = true
             vacaReason = .ordago
+        case .nextHand:
+            guard action.amount == 0 else { throw ScoringError.invalidAmount }
+            next.handsPlayed += 1
+            return next
         }
 
         if vacaWon {

@@ -41,6 +41,12 @@ public struct SchemaMigrator {
             migrated["preferences"] = preferences
             return migrated
         },
+        // v3 → v4: aparece la lista de jugadores. Las partidas antiguas no llevan asientos y se leen sin ellos.
+        3: { document in
+            var migrated = document
+            migrated["players"] = migrated["players"] ?? [Any]()
+            return migrated
+        },
     ])
 
     public func migrate(_ data: Data) throws -> Data {

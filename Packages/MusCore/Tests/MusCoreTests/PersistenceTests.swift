@@ -89,6 +89,7 @@ final class PersistenceTests: XCTestCase {
             0: { var d = $0; d["history"] = d.removeValue(forKey: "games") ?? []; return d },
             1: { var d = $0; d["preferences"] = ["goal": 40, "vacasToWin": 1, "theme": "system"]; return d },
             2: { $0 },
+            3: { var d = $0; d["players"] = [Any](); return d },
         ])
         try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
         try Data(#"{"games": []}"#.utf8).write(to: fileURL)
