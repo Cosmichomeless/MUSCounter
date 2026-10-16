@@ -17,6 +17,8 @@ Estado: **propuesta del equipo, pendiente de confirmación del responsable de pr
 | Errores al sumar | Deshacer exacto y lista de acciones recientes |
 | Poca legibilidad en la mesa | Tanteo muy grande, dos lados diferenciados por color **y** forma, tema oscuro |
 | Se pierde la partida al cerrar | La partida en curso se recupera siempre |
+| Solo cuentan tantos: no saben quién juega ni quién es mano | Jugadores en su asiento, mano que rota y estadísticas por jugador y pareja (versión 1.1) |
+| No se ve cómo fue la partida | Gráfica del tanteo y resultado compartible como imagen (versión 1.1) |
 
 ## 3. Nombre e identidad
 
@@ -32,7 +34,7 @@ Candidatos considerados:
 
 **Decisión:** Tanteo Mus como nombre y «Marcador de mus rápido y sin cuenta» como subtítulo, sujeto a la comprobación de disponibilidad. Si el nombre no estuviera libre, el siguiente candidato es «Órdago: marcador de mus».
 
-**Identidad visual propia (dirección):** fieltro verde oscuro de mesa de juego, acentos «oro» de la baraja española, tipografía de sistema redondeada con cifras tabulares. Equipos diferenciados por color **y** forma/etiqueta (nunca solo color). Se desarrolla en la issue del sistema visual (M1). Prohibido copiar iconografía, composición o textos de MusMarca.
+**Identidad visual propia (dirección):** fieltro verde oscuro de mesa de juego, acentos «oro» de la baraja española, tipografía de sistema redondeada con cifras tabulares. Equipos diferenciados por color **y** forma/etiqueta (nunca solo color). Se desarrolla en la issue del sistema visual (M1). Prohibido copiar iconografía, composición o textos de otras apps.
 
 ## 4. Modelo de ingresos del MVP
 

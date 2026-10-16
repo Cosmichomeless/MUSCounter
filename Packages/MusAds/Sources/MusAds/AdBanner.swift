@@ -55,7 +55,7 @@ private struct BannerRepresentable: UIViewRepresentable {
         // Solo se recarga si cambia el ancho (p. ej. al girar el iPhone).
         guard abs(context.coordinator.loadedWidth - width) > 1 else { return }
         context.coordinator.loadedWidth = width
-        banner.adSize = currentOrientationAnchoredAdaptiveBanner(width: width)
+        banner.adSize = largeAnchoredAdaptiveBanner(width: width)
         banner.load(Request())
     }
 

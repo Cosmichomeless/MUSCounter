@@ -17,6 +17,7 @@ final class AppModel {
 
     private let repository: GameRepository
     private let feedback: FeedbackPlayer
+    private let scoreboard: ScoreboardPublishing
 
     var screen: Screen = .home
     var game: Game?
@@ -25,6 +26,8 @@ final class AppModel {
     private(set) var history: [Game] = []
     /// Preferencias guardadas: reglas y tema que se usan al crear partidas nuevas.
     private(set) var preferences: Preferences = .standard
+    /// Personas guardadas al jugar con jugadores (para sugerirlas y calcular estadísticas).
+    private(set) var players: [Player] = []
     /// Lance al que se apuntan los tantos con los botones del marcador.
     var selectedLance: Lance = .grande
     /// Hoja abierta sobre el marcador (cantidad libre u órdago).
@@ -34,12 +37,15 @@ final class AppModel {
     /// Mensaje de error para mostrar al usuario (nil si no hay).
     var errorMessage: String?
 
-    init(repository: GameRepository, feedback: FeedbackPlayer? = nil) {
+    init(repository: GameRepository, feedback: FeedbackPlayer? = nil, scoreboard: ScoreboardPublishing? = nil) {
         self.repository = repository
         self.feedback = feedback ?? SystemFeedback()
+        self.scoreboard = scoreboard ?? NoScoreboard()
         self.game = repository.activeGame
         self.history = repository.history
         self.preferences = repository.preferences
+        self.players = repository.players
+        self.scoreboard.publish(game)
     }
 
     /// Abre los datos del dispositivo. Si el fichero está dañado se aparta (nunca se pierde en silencio)
@@ -49,12 +55,12 @@ final class AppModel {
             let url = try FileAppDataStore.defaultURL()
             let store = FileAppDataStore(fileURL: url)
             do {
-                return AppModel(repository: try GameRepository(store: store))
+                return AppModel(repository: try GameRepository(store: store), scoreboard: ScoreboardActivity())
             } catch {
                 let quarantine = url.appendingPathExtension("dañado")
                 try? FileManager.default.removeItem(at: quarantine)
                 try? FileManager.default.moveItem(at: url, to: quarantine)
-                let model = AppModel(repository: try GameRepository(store: store))
+                let model = AppModel(repository: try GameRepository(store: store), scoreboard: ScoreboardActivity())
                 model.errorMessage = "No se pudieron leer las partidas guardadas. Se ha empezado de cero."
                 return model
             }
@@ -107,6 +113,7 @@ final class AppModel {
     func goHome() {
         game = repository.activeGame
         sync()
+        refreshScoreboard()
         toast = nil
         screen = .home
     }
@@ -143,6 +150,23 @@ final class AppModel {
         }
     }
 
+    /// Estadísticas de cada jugador guardado, de las partidas terminadas.
+    var playerStats: [UUID: PlayerStats] { Stats.players(from: history) }
+
+    /// Parejas que han jugado juntas, de la que más ha jugado a la que menos.
+    var pairStats: [PairStats] { Stats.pairs(from: history) }
+
+    /// Quita a una persona de la lista de jugadores; sus partidas guardadas conservan el nombre.
+    func deletePlayer(_ id: UUID) {
+        do {
+            try repository.deletePlayer(id: id)
+            sync()
+            errorMessage = nil
+        } catch {
+            errorMessage = "No se pudo borrar al jugador."
+        }
+    }
+
     /// Borra una partida del historial.
     func deleteHistoryGame(_ id: UUID) {
         do {
@@ -165,10 +189,14 @@ final class AppModel {
         }
     }
 
+    /// Vuelve a publicar el marcador de la pantalla de bloqueo (por ejemplo, al cambiar el ajuste).
+    func refreshScoreboard() { scoreboard.publish(game) }
+
     /// Refresca lo que se muestra a partir del repositorio, que es la fuente de verdad.
     private func sync() {
         history = repository.history
         preferences = repository.preferences
+        players = repository.players
     }
 
     // MARK: - Partida
@@ -181,6 +209,11 @@ final class AppModel {
     /// El equipo `winner` gana un órdago aceptado.
     func declareOrdago(winner: TeamID) {
         perform { try $0.declareOrdago(winner: winner) }
+    }
+
+    /// Cierra la mano en curso: la mano pasa al siguiente jugador.
+    func nextHand() {
+        perform { try $0.nextHand() }
     }
 
     /// Corrección manual del tanteo de un equipo.
@@ -196,6 +229,7 @@ final class AppModel {
             try repository.update(updated)
             game = updated
             sync()
+            refreshScoreboard()
             toast = nil
             errorMessage = nil
             if screen == .result, updated.isInProgress { screen = .game }
@@ -211,6 +245,7 @@ final class AppModel {
         do {
             game = try repository.restartActiveGame()
             sync()
+            refreshScoreboard()
             toast = nil
             errorMessage = nil
         } catch {
@@ -223,6 +258,7 @@ final class AppModel {
         perform { try $0.abandon() }
         guard game?.status == .abandoned else { return }
         game = nil
+        refreshScoreboard()
         toast = nil
         screen = .home
     }
@@ -233,6 +269,7 @@ final class AppModel {
             try repository.discardActiveGame()
             game = nil
             sync()
+            refreshScoreboard()
             toast = nil
             screen = .home
         } catch {
@@ -255,6 +292,7 @@ final class AppModel {
             try repository.update(updated)
             game = updated
             sync()
+            refreshScoreboard()
             errorMessage = nil
             if updated.actions.count > before, let last = updated.actions.last, updated.status != .abandoned {
                 toast = Toast(message: ActionText.summary(last, game: updated))
@@ -280,14 +318,18 @@ final class AppModel {
         case .belowZero: return "El tanteo no puede bajar de 0."
         case .nothingToUndo: return "No hay nada que deshacer."
         case .invalidRules: return "Las opciones de la partida no son válidas."
+        case .invalidSeating: return "Los jugadores no son válidos: cada uno debe sentarse en un sitio distinto."
         }
     }
 
     /// Empieza una partida con el borrador. Si había otra en curso se archiva como abandonada.
     func startGame(with draft: GameSetupDraft) {
         do {
-            game = try repository.startGame(teamNames: draft.teamNames, rules: draft.rules)
+            game = try repository.startGame(
+                teamNames: draft.teamNames, rules: draft.rules, seats: draft.seats, firstMano: draft.firstMano
+            )
             sync()
+            refreshScoreboard()
             screen = .game
         } catch {
             errorMessage = "No se pudo crear la partida. Revisa las opciones e inténtalo de nuevo."

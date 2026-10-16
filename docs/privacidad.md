@@ -2,17 +2,19 @@
 
 > **Borrador sujeto a revisión legal.** La versión pública (EN/ES) está en <https://cosmichomeless.github.io/MUSCounter/privacy/> (rama `gh-pages`); mantén ambas iguales. Contacto: incidencias de GitHub, sin correo ni titular con nombre, como en STRIDE y MURMUR. La app incluye un resumen offline en Ajustes → «Privacidad y soporte».
 
-**Tanteo Mus** · Última actualización: 14 de octubre de 2026
+**Tanteo Mus** · Última actualización: 16 de octubre de 2026
 
 ## 1. Qué datos usa la app
 
 | Dato | Dónde se guarda | Para qué |
 |---|---|---|
-| Partidas en curso e historial, nombres de equipo, preferencias | Solo en tu iPhone (sandbox de la app) | Funcionamiento de la app |
+| Partidas en curso e historial, nombres de equipo y de jugadores, estadísticas calculadas con ellos, preferencias | Solo en tu iPhone (sandbox de la app) | Funcionamiento de la app |
 | Datos de anuncios (ver §2) | Los trata Google | Mostrar banners |
 
 - **No hay cuenta ni registro.** No pedimos nombre, correo ni teléfono para usar la app.
-- **No tenemos servidor propio** ni recibimos tus partidas.
+- **No tenemos servidor propio** ni recibimos tus partidas ni los nombres de los jugadores. Puedes borrar a un jugador desde Historial → Jugadores.
+- **Marcador en la pantalla de bloqueo**: es una Live Activity local. Muestra en la pantalla de bloqueo los nombres de equipo (y de la mano si los escribiste) y el tanteo, que cualquiera que vea tu iPhone bloqueado podría leer; se desactiva en Ajustes. No usa servidores ni notificaciones push.
+- **Compartir el resultado** es opcional: la imagen se genera en tu iPhone y solo sale de él si eliges enviarla desde la hoja de compartir de iOS. Lleva los nombres que hayas escrito y nunca anuncios.
 - **No usamos analítica propia** ni herramientas de seguimiento propias.
 - Si abres una incidencia en GitHub, será pública: no incluyas datos personales.
 

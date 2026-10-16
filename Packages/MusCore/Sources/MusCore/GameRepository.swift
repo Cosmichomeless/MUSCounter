@@ -14,6 +14,7 @@ public final class GameRepository {
     public var activeGame: Game? { data.activeGame }
     public var history: [Game] { data.history }
     public var preferences: Preferences { data.preferences }
+    public var players: [Player] { data.players }
 
     /// Guarda las preferencias. Solo afectan a las partidas que se creen a partir de ahora.
     public func updatePreferences(_ preferences: Preferences) throws {
@@ -24,10 +25,18 @@ public final class GameRepository {
     /// Empieza una partida nueva. Si había otra en curso se archiva como abandonada: nunca se pierde en silencio.
     @discardableResult
     public func startGame(
-        teamNames: PerTeam<String>, rules: GameRules, now: Date = Date()
+        teamNames: PerTeam<String>, rules: GameRules, seats: [Seat] = [], firstMano: Int = 0, now: Date = Date()
     ) throws -> Game {
-        let game = try Game(teamNames: teamNames, rules: rules, createdAt: now)
+        var game = try Game(teamNames: teamNames, rules: rules, seats: seats, firstMano: firstMano, createdAt: now)
         try commit { data in
+            if game.tracksPlayers {
+                // Cada asiento queda ligado a un jugador guardado (se crea si es nuevo).
+                let linked = game.seats.map { Seat(name: $0.name, playerID: Self.player(named: $0.name, in: &data).id) }
+                game = try Game(
+                    id: game.id, teamNames: game.teamNames, rules: rules,
+                    seats: linked, firstMano: firstMano, createdAt: now
+                )
+            }
             if var previous = data.activeGame {
                 try? previous.abandon(at: now)
                 Self.insertIntoHistory(previous, in: &data)
@@ -57,7 +66,10 @@ public final class GameRepository {
     @discardableResult
     public func restartActiveGame(now: Date = Date()) throws -> Game {
         guard let current = data.activeGame else { throw ScoringError.notInProgress }
-        let fresh = try Game(teamNames: current.teamNames, rules: current.rules, createdAt: now)
+        let fresh = try Game(
+            teamNames: current.teamNames, rules: current.rules, seats: current.seats,
+            firstMano: current.firstMano, createdAt: now
+        )
         try commit { $0.activeGame = fresh }
         return fresh
     }
@@ -69,6 +81,12 @@ public final class GameRepository {
 
     public func deleteHistoryGame(id: UUID) throws {
         try commit { $0.history.removeAll { $0.id == id } }
+    }
+
+    /// Quita a una persona de la lista de jugadores. Las partidas guardadas conservan su nombre,
+    /// pero dejan de contar para ninguna estadística.
+    public func deletePlayer(id: UUID) throws {
+        try commit { $0.players.removeAll { $0.id == id } }
     }
 
     /// Borra todo el historial (la partida en curso se conserva).
@@ -89,6 +107,19 @@ public final class GameRepository {
         try change(&next)
         try store.save(next)
         data = next
+    }
+
+    /// Jugador con ese nombre (sin distinguir mayúsculas ni acentos); se crea si no existe.
+    private static func player(named name: String, in data: inout AppData) -> Player {
+        let key = Self.key(name)
+        if let existing = data.players.first(where: { Self.key($0.name) == key }) { return existing }
+        let created = Player(name: name)
+        data.players.append(created)
+        return created
+    }
+
+    private static func key(_ name: String) -> String {
+        name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: Locale(identifier: "es"))
     }
 
     private static func insertIntoHistory(_ game: Game, in data: inout AppData) {

@@ -22,7 +22,7 @@ Los textos están en español (idioma principal). Entre paréntesis, la longitud
 Notas de ASO:
 
 - Apple ya indexa el nombre y el subtítulo, así que «tanteo», «mus» y «marcador» no hace falta repetirlos en las palabras clave (se mantiene «marcador» porque el límite lo permite; quítalo si se necesita sitio).
-- No se usan marcas ni nombres de otras apps (MusMarca) en ningún campo.
+- No se usan marcas ni nombres de otras apps en ningún campo.
 - «Sin anuncios» **no** puede aparecer en la ficha: la app es gratuita y muestra banners (ver [anuncios](anuncios.md)). El diferencial que se comunica es «sin cuenta» y «sin conexión», y que el marcador nunca lleva anuncios encima.
 
 ## 2. Descripción
@@ -42,6 +42,15 @@ Te has equivocado de equipo o de cantidad: toca Deshacer tantas veces como neces
 A 30 O A 40, CON O SIN VACAS
 Elige a cuántos tantos se juega y cuántas partidas hay que ganar. Cada equipo tiene el nombre que quieras.
 
+LA MESA ENTERA, CON SUS JUGADORES (OPCIONAL)
+Escribe los cuatro nombres en el orden en que os sentáis y la app sabe quién es mano. Pasa la mano con un toque y la rotación sigue en la revancha. En Historial verás las victorias, las vacas y los órdagos de cada jugador y de cada pareja. Todo se guarda solo en tu iPhone.
+
+MARCADOR EN LA PANTALLA DE BLOQUEO
+Mientras juegas, el tanteo y la mano se ven en la pantalla de bloqueo y en la Isla Dinámica. Lo desactivas en Ajustes.
+
+CÓMO FUE LA PARTIDA
+Una gráfica del tanteo anotación a anotación, los tantos de cada equipo por lance y una imagen del resultado para enviar al grupo, sin anuncios.
+
 TU PARTIDA, A SALVO
 Si cierras la app a mitad de partida, la recuperas tal cual al volver. Las partidas terminadas quedan en el historial. Revancha en un toque.
 
@@ -50,6 +59,7 @@ PENSADA PARA LA MESA
 - Marcador en vertical y en horizontal.
 - Compatible con VoiceOver y con texto grande.
 - Háptica y sonido opcionales al apuntar.
+- Piedras opcionales: el tanteo dibujado en grupos de cinco.
 
 PRIVACIDAD
 No necesitas cuenta y tus partidas se guardan solo en tu iPhone. La app es gratuita y muestra anuncios de Google AdMob en las pantallas de inicio, historial y victoria, nunca durante el marcador. En la Unión Europea, el Reino Unido y Suiza te pedimos tu consentimiento antes de mostrar anuncios, y puedes cambiarlo en Ajustes.
@@ -63,6 +73,17 @@ Antes de publicar, contrastar cada afirmación con la versión enviada (p. ej. �
 
 ```
 Primera versión de Tanteo Mus: marcador de mus con anotación por lances, deshacer, partida recuperable, historial y tema claro/oscuro.
+```
+
+## 3 bis. Notas de la versión (1.1)
+
+```
+Novedades de Tanteo Mus:
+• Jugadores y mesa: escribe los cuatro nombres, indica quién es mano y pásala con un toque.
+• Estadísticas por jugador y por pareja: victorias, vacas, órdagos y lance fuerte.
+• Gráfica de la evolución de cada partida y resultado para compartir como imagen.
+• Marcador en la pantalla de bloqueo y en la Isla Dinámica mientras juegas.
+• Piedras opcionales: el tanteo en grupos de cinco (Ajustes).
 ```
 
 ## 4. Clasificación por edad y cuestionarios
@@ -86,6 +107,9 @@ Orden propuesto (contar el flujo de una partida real):
 | 4 | Nueva partida (30/40, vacas, nombres) | «A 30 o a 40, con o sin vacas» |
 | 5 | Victoria | «Revancha en un toque» |
 | 6 | Marcador en tema claro | «Claro u oscuro» |
+| 7 | Nueva partida con jugadores y mano (1.1) | «Cuatro jugadores, una mano que rota» |
+| 8 | Estadísticas de jugadores (1.1) | «Quién gana más, quién canta más órdagos» |
+| 9 | Gráfica y resultado para compartir (1.1) | «Cómo fue la partida» |
 
 Capturas hechas, en [`docs/capturas/`](capturas/) (1320 × 2868, iPhone 17 Pro Max, barra de estado a las 9:41, sin marco ni titular):
 

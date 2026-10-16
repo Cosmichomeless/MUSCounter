@@ -34,7 +34,7 @@ struct ActionLogSheet: View {
         HStack(spacing: Metrics.spacingM) {
             TeamMarker(team: action.team)
             VStack(alignment: .leading, spacing: 2) {
-                Text(game.teamNames[action.team]).font(.subheadline.weight(.semibold))
+                Text(rowTitle(action)).font(.subheadline.weight(.semibold))
                 Text(ActionText.lance(action)).font(.footnote).foregroundStyle(Theme.mutedText)
             }
             Spacer(minLength: 0)
@@ -46,7 +46,14 @@ struct ActionLogSheet: View {
             if isLast { RoundedRectangle(cornerRadius: 12, style: .continuous).strokeBorder(Theme.accent, lineWidth: 2) }
         }
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(game.teamNames[action.team]), \(ActionText.lance(action)), \(ActionText.amount(action))\(isLast ? ", última acción" : "")")
+        .accessibilityLabel("\(rowTitle(action)), \(ActionText.lance(action)), \(ActionText.amount(action))\(isLast ? ", última acción" : "")")
+    }
+
+    /// Quién hizo la acción; al pasar de mano, quién es mano ahora.
+    private func rowTitle(_ action: GameAction) -> String {
+        action.kind == .nextHand
+            ? (game.manoName(after: action) ?? game.teamNames[action.team])
+            : game.teamNames[action.team]
     }
 }
 
@@ -57,12 +64,14 @@ enum ActionText {
         case let .score(lance): return lance.displayName
         case .ordago: return "Órdago"
         case .adjustment: return "Ajuste"
+        case .nextHand: return "Siguiente mano"
         }
     }
 
     static func amount(_ action: GameAction) -> String {
         switch action.kind {
         case .ordago: return "Órdago"
+        case .nextHand: return "Mano"
         default: return action.amount > 0 ? "+\(action.amount)" : "\(action.amount)"
         }
     }
@@ -73,6 +82,7 @@ enum ActionText {
         case let .score(lance): return "\(lance.displayName): +\(action.amount) para \(team)"
         case .ordago: return "Órdago ganado por \(team)"
         case .adjustment: return "Ajuste \(action.amount > 0 ? "+" : "")\(action.amount) para \(team)"
+        case .nextHand: return "Mano para \(game.manoName(after: action) ?? team)"
         }
     }
 }

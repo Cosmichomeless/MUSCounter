@@ -22,6 +22,11 @@ Cubre #20. **Este documento prepara la beta; no la sustituye.** Hace falta distr
 | 8 | Ajustes: tema, vibración, sonido, privacidad | Se aplican y persisten |
 | 9 | Horizontal, texto grande, VoiceOver ([accesibilidad](accesibilidad.md) §4) | Legible y operable |
 | 10 | Banners y consentimiento (EEE) | No tapan el marcador; el formulario aparece donde corresponde |
+| 11 | (1.1) Escribir los cuatro nombres, elegir primera mano y pasar la mano varias veces, deshacer incluido | La mano sigue el sentido horario y la barra «Mano» coincide con la mesa real |
+| 12 | (1.1) Terminar partidas con nombres y abrir Historial → Jugadores | Victorias, vacas y órdagos coinciden con lo que recuerdan; las abandonadas no cuentan |
+| 13 | (1.1) Abrir una partida del historial, ver la gráfica y compartir la imagen | La gráfica refleja la partida; la imagen se ve bien y no lleva anuncios |
+| 14 | (1.1) Activar «Mostrar piedras» en Ajustes | Los grupos de cinco se leen bien y no cambian el tanteo |
+| 15 | (1.1) Empezar una partida y bloquear el iPhone; anotar y deshacer; terminar o abandonar la partida | El tanteo de la pantalla de bloqueo coincide con la app y desaparece al terminar |
 
 ## 3. Qué incidencias se recogen
 

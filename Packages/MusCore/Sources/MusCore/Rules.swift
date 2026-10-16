@@ -53,4 +53,6 @@ public enum ScoringError: Error, Equatable, Sendable {
     case nothingToUndo
     /// Las reglas no están entre las variantes admitidas.
     case invalidRules
+    /// La mesa no tiene cuatro asientos, o la primera mano no es uno de ellos.
+    case invalidSeating
 }

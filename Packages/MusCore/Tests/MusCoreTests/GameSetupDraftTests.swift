@@ -57,4 +57,41 @@ final class GameSetupDraftTests: XCTestCase {
         func save(_ data: AppData) throws {}
         func deleteAll() throws {}
     }
+
+    // MARK: - Jugadores
+
+    func testDraftWithoutSeatNamesDoesNotTrackPlayers() throws {
+        XCTAssertFalse(GameSetupDraft.standard.tracksPlayers)
+        XCTAssertFalse(try GameSetupDraft.standard.makeGame().tracksPlayers)
+    }
+
+    func testDraftTracksPlayersOnlyWhenAllFourSeatsHaveAName() throws {
+        var draft = GameSetupDraft.standard
+        draft.seatNames = ["Ana", "Beto", "Carla", "  "]
+        XCTAssertFalse(draft.tracksPlayers)
+        draft.seatNames[3] = "Dani"
+        draft.firstMano = 2
+        XCTAssertTrue(draft.tracksPlayers)
+        let game = try draft.makeGame()
+        XCTAssertEqual(game.seats.map(\.name), ["Ana", "Beto", "Carla", "Dani"])
+        XCTAssertEqual(game.manoName, "Carla")
+    }
+
+    func testDraftDetectsRepeatedSeatNames() {
+        var draft = GameSetupDraft.standard
+        draft.seatNames = ["José", "Beto", "jose", "Dani"]
+        XCTAssertTrue(draft.hasDuplicateSeatNames)
+        draft.seatNames = ["José", "Beto", "Carla", "Dani"]
+        XCTAssertFalse(draft.hasDuplicateSeatNames)
+        draft.seatNames = ["", "", "Carla", ""]
+        XCTAssertFalse(draft.hasDuplicateSeatNames)
+    }
+
+    func testDraftFromGameKeepsSeatsAndPassesTheMano() throws {
+        var game = try Game(seats: ["Ana", "Beto", "Carla", "Dani"].map { Seat(name: $0) }, firstMano: 1)
+        try game.nextHand()
+        let draft = GameSetupDraft(from: game)
+        XCTAssertEqual(draft.seatNames, ["Ana", "Beto", "Carla", "Dani"])
+        XCTAssertEqual(draft.firstMano, 2)
+    }
 }
