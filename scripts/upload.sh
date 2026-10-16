@@ -2,6 +2,7 @@
 # Exporta build/MUSCounter.xcarchive (de scripts/archive.sh) a un .ipa o lo sube a App Store Connect / TestFlight.
 # Sin argumentos solo genera el .ipa en build/export; con --subir lo sube de verdad (acción de cara al exterior: confírmala antes).
 # Requiere DEVELOPMENT_TEAM en Config/Secrets.xcconfig o exportado.
+# No sube símbolos: los XCFramework de Google (AdMob, UMP) no traen dSYM y la subida avisaba de ello en cada build. El dSYM de la app queda en el .xcarchive (build/), conservarlo para simbolizar fallos.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -22,7 +23,7 @@ cat > "$plist" <<EOF
 <key>teamID</key><string>$team</string>
 <key>signingStyle</key><string>automatic</string>
 <key>destination</key><string>$destino</string>
-<key>uploadSymbols</key><true/>
+<key>uploadSymbols</key><false/>
 </dict></plist>
 EOF
 
