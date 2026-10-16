@@ -4,7 +4,7 @@ Estado: **instrumento listo, consulta pendiente.** Este documento recoge el plan
 
 ## 1. Objetivo
 
-Confirmar con jugadores reales el vocabulario, las variantes y el flujo de anotación antes de cerrar el diseño (M1) y la implementación (M2). Referencia funcional: MusMarca (tanteo visible, anotación directa por lances, deshacer).
+Confirmar con jugadores reales el vocabulario, las variantes y el flujo de anotación antes de cerrar el diseño (M1) y la implementación (M2). Base de partida: tanteo visible, anotación directa por lances y deshacer, tal como se apunta hoy en la mesa.
 
 ## 2. Muestra mínima
 

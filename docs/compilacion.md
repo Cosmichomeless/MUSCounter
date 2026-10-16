@@ -26,6 +26,7 @@ python3 scripts/check_rules_tests.py  # cada caso R-NN de la especificación tie
 | Ajuste | Valor | Dónde |
 |---|---|---|
 | Bundle ID | `com.cosmichomeless.muscounter` (definitivo para la 1.0: es el que se usa al crear la app en App Store Connect) | `Config/Shared.xcconfig` |
+| Bundle ID de la extensión de Live Activity | `com.cosmichomeless.muscounter.liveactivity` (hay que registrarlo en el portal de desarrolladores antes de archivar; con firma automática Xcode puede crearlo) | `project.yml` |
 | iOS mínimo | 17.0 | `project.yml`, `Config/Shared.xcconfig` |
 | Dispositivos | solo iPhone | `Config/Shared.xcconfig` |
 | Versión / build | `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` | `Config/Shared.xcconfig` |

@@ -19,7 +19,7 @@
 Un contador de mus para iPhone que se abre y se usa en dos toques, sin cuenta ni conexión: tanteo grande y legible sobre la mesa, anotación directa por lances y un deshacer que nunca falla.
 
 - **Público inicial:** jugadores habituales de mus en España que hoy usan piedras físicas, papel o contadores genéricos.
-- **Referencia funcional:** MusMarca (tanteo visible, anotación directa por lances, deshacer). Solo se toma la *función*; la composición, el diseño y la marca son propios.
+- **Base funcional:** tanteo visible, anotación directa por lances y deshacer. Tanto la composición como el diseño y la marca son propios; se parte de cómo se apunta una partida real en la mesa (ver [validación con jugadores](validacion-jugadores.md)).
 
 ## 3. Alcance del MVP
 
@@ -33,12 +33,24 @@ Entra (cada punto tiene su issue en M2):
 6. **Preferencias**: objetivo de tantos, vacas y tema (claro/oscuro/sistema).
 7. Marcador **offline** (los anuncios son lo único que usa red), **sin cuenta**, **sin analítica propia**; con **anuncios discretos** que nunca aparecen en la pantalla del marcador (ver [propuesta de valor](propuesta-de-valor.md)).
 
+## 3 bis. Versión 1.1: la mesa y los jugadores
+
+El contador deja de ser solo un marcador de tantos y pasa a seguir la partida tal como se juega en la mesa:
+
+1. **Jugadores y mesa** (opcional): al crear la partida se escriben los cuatro nombres en el orden en que se sientan; los asientos pares son un equipo y los impares el otro. Los nombres se recuerdan en el iPhone y se sugieren al crear la siguiente partida.
+2. **Mano**: se indica quién es mano y un botón «Siguiente mano» la pasa al jugador siguiente, en sentido horario. Queda en el registro de acciones y se puede deshacer. La revancha continúa la rotación.
+3. **Estadísticas**: en Historial → «Jugadores», partidas, victorias y porcentaje, vacas ganadas, órdagos ganados y perdidos, lance en el que más tantos suma su equipo y rendimiento de cada pareja. Cuentan solo las partidas terminadas con los cuatro jugadores; las abandonadas no.
+4. **Evolución y resultado compartible**: gráfica del tanteo anotación a anotación (con marcas en los cambios de mano y la meta), tantos por lance y una imagen del resultado para enviar por mensajería, sin anuncios y solo si la persona lo pide.
+5. **Piedras**: ajuste visual que dibuja el tanteo en grupos de cinco. No cambia ninguna regla.
+6. **Marcador en la pantalla de bloqueo**: mientras hay una partida en curso, el tanteo, las vacas y la mano se ven en la pantalla de bloqueo y en la Isla Dinámica (Live Activity local). Se puede desactivar en Ajustes y desaparece al terminar o abandonar la partida.
+
+Todo es opcional: sin nombres, la partida funciona igual que en 1.0.
+
 ## 4. Fuera del MVP (versiones posteriores)
 
-- Ligas, torneos y estadísticas avanzadas.
-- Nombres de jugadores individuales (el modelo los admite como opcionales; la UI no los expone en el MVP).
-- Widgets, Live Activities, Apple Watch.
-- Sincronización iCloud, compartir resultados, iPad optimizado.
+- Ligas y torneos.
+- Widgets, Apple Watch.
+- Sincronización iCloud, iPad optimizado.
 - Más idiomas (euskera, catalán, gallego, inglés). El MVP sale en español.
 - Variantes de reglas exóticas más allá de las listadas en reglas de tanteo (issue de reglas, M0).
 

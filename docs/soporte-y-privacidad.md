@@ -24,7 +24,7 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 1. Recepción por una incidencia en GitHub (se pide no incluir datos personales).
 2. Verificar que quien escribe es el remitente de la solicitud; no se pide documentación adicional salvo duda razonable.
 3. Responder en **un mes** (RGPD art. 12), prorrogable justificadamente.
-4. Contenido de la respuesta: no existen datos personales en servidores propios; las partidas residen en el dispositivo (se borran al desinstalar). Para datos de publicidad, indicar a Google (<https://myaccount.google.com/data-and-privacy>).
+4. Contenido de la respuesta: no existen datos personales en servidores propios; las partidas y los nombres de los jugadores residen en el dispositivo (se borran al desinstalar; los jugadores también se pueden borrar desde Historial → Jugadores). Para datos de publicidad, indicar a Google (<https://myaccount.google.com/data-and-privacy>).
 5. Conservar solo la fecha y el tipo de solicitud como constancia.
 
 ## 4. Respuestas de privacidad de App Store Connect
@@ -42,7 +42,7 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 | Ubicación aproximada (dirección IP) | Sí | No | Publicidad de terceros |
 
 - **Seguimiento («Tracking») = No**: no se solicita ATT ni se accede al IDFA (decisión en [anuncios](anuncios.md)). Si esto cambia, hay que declarar seguimiento, añadir `NSUserTrackingUsageDescription` y los dominios en el manifiesto.
-- **Datos propios:** ninguno (sin cuenta, sin servidor, sin analítica propia).
+- **Datos propios:** ninguno (sin cuenta, sin servidor, sin analítica propia). Los nombres de jugadores y las estadísticas se guardan solo en el dispositivo; la imagen de resultado solo sale si la persona la comparte desde la hoja de iOS.
 - `App/PrivacyInfo.xcprivacy`: `NSPrivacyTracking = false`, sin dominios, sin tipos recopilados por la app ni APIs de «razón requerida» propias. El SDK (13.x) y UMP traen su propio manifiesto.
 - Cuestionario de clasificación por edad y «Contiene anuncios»: indicar que sí hay publicidad.
 

@@ -67,6 +67,10 @@ La interfaz **no** valida si una cantidad es «posible» en la mano real; solo v
 5. **Ajuste manual** ±1 para corregir un error sin deshacer: se registra como acción de lance «Ajuste»; no puede dejar el marcador por debajo de 0 y, si alcanza el objetivo, cierra la vaca como cualquier otra anotación.
 6. **Partida abandonada**: el usuario puede abandonar. Se guarda en el historial con estado «Abandonada», sin ganador, y no admite más acciones. Una partida en curso sin tocar se conserva indefinidamente hasta que el usuario la retome, la abandone o la borre.
 
+### Mesa y mano (versión 1.1, informativo)
+
+La mesa tiene cuatro asientos en sentido horario; los equipos se sientan alternados (asientos 0 y 2 contra 1 y 3). La **mano** es el jugador que abre cada lance y pasa al siguiente asiento en sentido horario tras cada mano. La app no deduce cuándo termina una mano: la persona que apunta pulsa «Siguiente mano», que queda en el registro y se puede deshacer. La mano no cambia ningún tanteo; solo se usa para el registro, la gráfica y las estadísticas. Las estadísticas cuentan únicamente partidas terminadas con los cuatro jugadores nombrados.
+
 ## 7. Casos de prueba de referencia
 
 Objetivo 40 y 1 vaca para ganar salvo que se indique otra cosa.
