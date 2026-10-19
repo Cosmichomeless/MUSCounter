@@ -108,7 +108,7 @@ Orden propuesto (contar el flujo de una partida real):
 | 5 | Victoria | «Revancha en un toque» |
 | 6 | Marcador en tema claro | «Claro u oscuro» |
 | 7 | Nueva partida con jugadores y mano (1.1) | «Cuatro jugadores, una mano que rota» |
-| 8 | Estadísticas de jugadores (1.1) | «Quién gana más, quién canta más órdagos» |
+| 8 | Estadísticas de jugadores y parejas (1.1) | «Quién gana más y en qué lance puntúa» |
 | 9 | Gráfica y resultado para compartir (1.1) | «Cómo fue la partida» |
 
 Capturas hechas, en [`docs/capturas/`](capturas/) (1320 × 2868, iPhone 17 Pro Max, barra de estado a las 9:41, sin marco ni titular):
@@ -121,8 +121,11 @@ Capturas hechas, en [`docs/capturas/`](capturas/) (1320 × 2868, iPhone 17 Pro M
 | 4 | `04-nueva-partida.png` |
 | 5 | `05-victoria.png` |
 | 6 | `06-claro.png` |
+| 7 | `07-jugadores.png` |
+| 8 | `08-estadisticas.png` |
+| 9 | `09-grafica.png` |
 
-Se generaron con la app (build de la versión actual, sin banners de prueba) sobre partidas de ejemplo con nombres «Nosotros» / «Ellos». Los titulares en español sobre la captura son opcionales; Apple acepta las capturas tal cual. Si la versión enviada cambia el aspecto de alguna pantalla, hay que repetirlas.
+Se generaron con la app (build de la versión actual, sin banners de prueba) sobre partidas de ejemplo con nombres «Nosotros» / «Ellos» (las 7-9, con los jugadores ficticios Ana, Luis, Marta y Pedro y tres partidas jugadas de verdad en la app). Los titulares en español sobre la captura son opcionales; Apple acepta las capturas tal cual. Si la versión enviada cambia el aspecto de alguna pantalla, hay que repetirlas.
 
 Reglas: capturas de la **versión enviada**, sin banner de prueba («Test Ad») visible, sin datos personales, con nombres de equipo neutros («Nosotros» / «Ellos»). Los titulares sobre la captura van en español.
 
