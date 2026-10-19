@@ -44,7 +44,12 @@ Lista de comprobación propia de esta app, basada en la guía general de publica
 Tanteo Mus es un marcador para el juego de cartas mus. No requiere cuenta ni inicio de sesión y no pide ningún permiso.
 Para probarla: abrir la app, pulsar «Nueva partida», pulsar un lance (Grande, Chica, Pares, Juego o Punto) y una cantidad para apuntar tantos a un equipo; «Deshacer» revierte la última jugada.
 La app es gratuita y muestra banners de Google AdMob en Inicio, Historial y la pantalla de victoria, nunca durante el marcador. En el EEE, Reino Unido y Suiza se muestra el formulario de consentimiento de Google (UMP) antes de pedir anuncios. No se usa App Tracking Transparency.
-No hay compras integradas ni funciones que dependan de la conexión.
+No hay compras integradas ni funciones que dependan de la conexión (solo los anuncios la usan).
+Novedades de la 1.1, para verlas:
+- Jugadores y mano: en «Nueva partida», escribir los cuatro nombres en «Jugadores (opcional)» y elegir la primera mano. La mano se pasa con un toque. Las estadísticas por jugador y por pareja están en Historial > Jugadores (las parejas cuentan solo las partidas terminadas con los cuatro jugadores).
+- Pantalla de bloqueo e Isla Dinámica: con una partida en curso, bloquear el iPhone. Es una Live Activity local, sin notificaciones push ni permisos; se desactiva en Ajustes > «Marcador en la pantalla de bloqueo».
+- Gráfica y resultado para compartir: en Historial, al abrir una partida terminada, «Resumen» muestra la gráfica y el botón «Compartir resultado», que solo envía la imagen si la persona lo elige en la hoja de iOS.
+Propósito: la app solo puntúa partidas de mus, un juego de cartas español. No es una variante de ninguna otra app de la cuenta.
 ```
 
 Contacto del revisor (nombre, correo, teléfono): lo rellena el titular en App Store Connect; no se guarda en el repositorio.
