@@ -2,7 +2,7 @@
 
 > **Borrador sujeto a revisión legal.** La versión pública (EN/ES) está en <https://cosmichomeless.github.io/MUSCounter/privacy/> (rama `gh-pages`); mantén ambas iguales. Contacto: incidencias de GitHub, sin correo ni titular con nombre, como en STRIDE y MURMUR. La app incluye un resumen offline en Ajustes → «Privacidad y soporte».
 
-**Tanteo Mus** · Última actualización: 16 de octubre de 2026
+**Tanteo Mus** · Última actualización: 20 de octubre de 2026
 
 ## 1. Qué datos usa la app
 
