@@ -38,7 +38,8 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 | Identificadores → ID de dispositivo | Sí | No | Publicidad de terceros, analítica |
 | Datos de uso → Datos de publicidad | Sí | No | Publicidad de terceros |
 | Datos de uso → Otras interacciones | Sí | No | Publicidad de terceros, analítica |
-| Diagnósticos → Datos de rendimiento y de fallos | No | No | Analítica |
+| Diagnósticos → Datos de rendimiento | Sí | No | Analítica |
+| Diagnósticos → Datos de fallos | No | No | Analítica |
 | Ubicación aproximada (dirección IP) | Sí | No | Publicidad de terceros |
 
 - **Seguimiento («Tracking») = No**: no se solicita ATT ni se accede al IDFA (decisión en [anuncios](anuncios.md)). Si esto cambia, hay que declarar seguimiento, añadir `NSUserTrackingUsageDescription` y los dominios en el manifiesto.
@@ -50,7 +51,8 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 
 - [x] **[a cargo del titular]** Cuenta e IDs reales de AdMob; mensaje de consentimiento UMP publicado en AdMob (EEE/Reino Unido/Suiza).
 - [x] Política y soporte públicos en GitHub Pages (`PRIVACY_POLICY_URL` y `SUPPORT_URL` ya configurados).
-- [ ] **[a cargo del titular]** Revisión legal del [borrador](privacidad.md) y cumplimentar la ficha de privacidad según §4.
+- [x] Revisión legal del [borrador](privacidad.md) hecha y conforme (confirmada por el titular el 2026-10-21).
+- [x] Ficha de privacidad de App Store Connect revisada y ajustada a §4 por el titular el 2026-10-21 (vinculación, ubicación aproximada y propósitos). Pendiente solo contrastar con la guía de Google si el SDK exige declarar seguimiento.
 - [x] Probar en un dispositivo: aparece el formulario UMP y se muestra el banner (confirmado por el titular el 2026-10-14).
-- [ ] Comprobar que «Revisar consentimiento» en Ajustes reabre el formulario.
+- [x] «Revisar consentimiento» en Ajustes probado por el titular (OK).
 - [ ] Revisar `PrivacyInfo.xcprivacy` y la ficha al actualizar GoogleMobileAds.

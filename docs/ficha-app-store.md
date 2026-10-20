@@ -140,4 +140,6 @@ El icono (`App/Assets.xcassets/AppIcon.appiconset`) se genera con `scripts/make-
 - [x] Icono con identidad propia (claro, oscuro y tintado).
 - [x] Capturas de la versión actual (§5, `docs/capturas/`) y sus versiones con titular (`docs/capturas/titulares/`); repetirlas solo si cambia la interfaz antes de enviar.
 - [x] Afirmaciones de la descripción contrastadas con el código el 2026-10-19: horizontal, vibración y sonido opcionales, piedras, últimas jugadas, VoiceOver, marcador en pantalla de bloqueo con su ajuste, deshacer sin límite.
-- [ ] **[a cargo del titular]** Copyright, disponibilidad del nombre «Tanteo Mus» y alta de la ficha en App Store Connect.
+- [x] Copyright («2026 David Rodríguez») puesto en la versión 1.1 y nombre «Tanteo Mus» confirmado como disponible por el titular (2026-10-20); ficha dada de alta en App Store Connect.
+- [x] Revisión legal de la política de privacidad hecha y conforme (confirmada por el titular el 2026-10-21).
+- [x] Ficha de privacidad de la app en App Store Connect revisada y ajustada por el titular el 2026-10-21 (§4 de [soporte y privacidad](soporte-y-privacidad.md)).
