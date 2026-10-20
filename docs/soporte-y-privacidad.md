@@ -51,8 +51,8 @@ Cierra el alcance de #19. Lo marcado como **[a cargo del titular]** no se puede 
 
 - [x] **[a cargo del titular]** Cuenta e IDs reales de AdMob; mensaje de consentimiento UMP publicado en AdMob (EEE/Reino Unido/Suiza).
 - [x] Política y soporte públicos en GitHub Pages (`PRIVACY_POLICY_URL` y `SUPPORT_URL` ya configurados).
-- [x] Revisión legal del [borrador](privacidad.md) hecha y conforme (confirmada por el titular el 2026-10-21).
-- [x] Ficha de privacidad de App Store Connect revisada y ajustada a §4 por el titular el 2026-10-21 (vinculación, ubicación aproximada y propósitos). Pendiente solo contrastar con la guía de Google si el SDK exige declarar seguimiento.
+- [x] Revisión legal del [borrador](privacidad.md) hecha y conforme (confirmada por el titular el 2026-10-20).
+- [x] Ficha de privacidad de App Store Connect revisada y ajustada a §4 por el titular el 2026-10-20 (vinculación, ubicación aproximada y propósitos). Pendiente solo contrastar con la guía de Google si el SDK exige declarar seguimiento.
 - [x] Probar en un dispositivo: aparece el formulario UMP y se muestra el banner (confirmado por el titular el 2026-10-14).
 - [x] «Revisar consentimiento» en Ajustes probado por el titular (OK).
 - [ ] Revisar `PrivacyInfo.xcprivacy` y la ficha al actualizar GoogleMobileAds.
